@@ -1,0 +1,75 @@
+# Node modules
+
+node_modules/
+
+# Logs
+
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage / tests
+
+coverage/
+.nyc_output/
+
+# Dependency directories
+
+jspm_packages/
+
+# Optional npm cache
+
+.npm
+
+# Optional eslint cache
+
+.eslintcache
+
+# Build folders
+
+dist/
+build/
+out/
+
+# Temporary files
+
+tmp/
+temp/
+*.tmp
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Uploads (caso salve arquivos localmente)
+
+uploads/
+
+# SQLite (se quiser ignorar banco local)
+
+*.sqlite
+*.sqlite3
+*.db
+
+# Vercel / Render builds
+
+.vercel
+.render
