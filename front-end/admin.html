@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão - Igreja Viva</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/front-end/styles/styles.css">
+</head>
+
+<body class="bg-pattern antialiased admin-body">
+
+    <div class="admin-layout">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon-wrapper hover-spin">
+                    <i class="fa-solid fa-cross logo-icon" style="color: var(--color-gold);"></i>
+                </div>
+                <div>
+                    <h2 class="font-serif text-white font-bold text-xl">Igreja Viva</h2>
+                    <span class="text-xs text-gray-400 uppercase tracking-widest">Painel Admin</span>
+                </div>
+                <button class="btn-mobile-close" id="closeAdminMenuBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active" onclick="switchView('dashboard', this)"><i
+                        class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="#" class="sidebar-link" onclick="switchView('acervo', this)"><i
+                        class="fa-solid fa-folder-open"></i> Gerir Acervo</a>
+                <a href="#" class="sidebar-link" onclick="switchView('lideranca', this)"><i
+                        class="fa-solid fa-users"></i> Liderança</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/front-end/index.html" class="sidebar-link text-red-400 hover:text-red-300"><i
+                        class="fa-solid fa-arrow-right-from-bracket"></i> Terminar Sessão</a>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+
+        <main class="admin-main">
+
+            <div id="view-dashboard" class="admin-view active fade-in-up">
+                <header class="admin-header">
+                    <div class="admin-header-title">
+                        <button class="btn-mobile-menu"
+                            onclick="document.getElementById('adminSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.remove('hidden');"><i
+                                class="fa-solid fa-bars"></i></button>
+                        <div>
+                            <h1 class="text-2xl font-bold text-dark tracking-tight">Bem-vindo, Liderança</h1>
+                            <p class="text-sm text-gray-500 hidden-mobile">Resumo das atividades e ficheiros recentes.
+                            </p>
+                        </div>
+                    </div>
+                    <button class="btn-ripple btn-leadership hover-lift"
+                        onclick="document.getElementById('uploadModal').classList.remove('hidden')">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden-mobile">Novo Ficheiro</span>
+                    </button>
+                </header>
+
+                <div class="stats-grid mt-6">
+                    <div class="stat-card hover-lift">
+                        <div class="stat-icon bg-blue-50 text-blue-500"><i class="fa-solid fa-file-lines"></i></div>
+                        <div class="stat-info">
+                            <h3>Total de Ficheiros</h3>
+                            <p id="totalFilesCount">124</p>
+                        </div>
+                    </div>
+                    <div class="stat-card hover-lift">
+                        <div class="stat-icon bg-orange-50 text-orange-500"><i class="fa-solid fa-download"></i></div>
+                        <div class="stat-info">
+                            <h3>Downloads este mês</h3>
+                            <p>892</p>
+                        </div>
+                    </div>
+                    <div class="stat-card hover-lift">
+                        <div class="stat-icon bg-green-50 text-green-500"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="stat-info">
+                            <h3>Líderes Ativos</h3>
+                            <p id="totalLeadersCount">4</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-panel mt-8 hover-lift-slight">
+                    <div class="panel-header">
+                        <h2 class="text-lg font-bold text-dark">Últimos Ficheiros Adicionados</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-acervo" class="admin-view hidden">
+                <header class="admin-header">
+                    <div class="admin-header-title">
+                        <button class="btn-mobile-menu"
+                            onclick="document.getElementById('adminSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.remove('hidden');"><i
+                                class="fa-solid fa-bars"></i></button>
+                        <div>
+                            <h1 class="text-2xl font-bold text-dark tracking-tight">Gerir Acervo</h1>
+                            <p class="text-sm text-gray-500 hidden-mobile">Edite ou remova ficheiros existentes no
+                                portal.</p>
+                        </div>
+                    </div>
+                    <button class="btn-ripple btn-leadership hover-lift"
+                        onclick="document.getElementById('uploadModal').classList.remove('hidden')">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden-mobile">Novo Ficheiro</span>
+                    </button>
+                </header>
+
+                <div class="admin-panel mt-6 hover-lift-slight">
+                    <div class="panel-header" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <input type="text" id="adminSearchInput" class="form-select flex-grow"
+                            placeholder="Pesquisar por título ou autor..." style="max-width: 400px;">
+                        <select id="adminCategoryFilter" class="form-select" style="max-width: 200px;">
+                            <option value="Todos">Todas as Categorias</option>
+                            <option value="Sermão">Sermão</option>
+                            <option value="Música">Música</option>
+                            <option value="Estudo">Estudo</option>
+                            <option value="Avisos">Avisos</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Autor</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="acervoTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-lideranca" class="admin-view hidden">
+                <header class="admin-header">
+                    <div class="admin-header-title">
+                        <button class="btn-mobile-menu"
+                            onclick="document.getElementById('adminSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.remove('hidden');"><i
+                                class="fa-solid fa-bars"></i></button>
+                        <div>
+                            <h1 class="text-2xl font-bold text-dark tracking-tight">Equipa de Liderança</h1>
+                            <p class="text-sm text-gray-500 hidden-mobile">Faça a gestão dos acessos ao painel de
+                                administração.</p>
+                        </div>
+                    </div>
+                    <button class="btn-ripple btn-leadership hover-lift"
+                        onclick="document.getElementById('addLeaderModal').classList.remove('hidden')">
+                        <i class="fa-solid fa-user-plus"></i> <span class="hidden-mobile">Novo Líder</span>
+                    </button>
+                </header>
+
+                <div class="admin-panel mt-6 hover-lift-slight">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>E-mail</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="liderancaTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="uploadModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('uploadModal').classList.add('hidden')"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <div class="modal-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <h3>Adicionar Material</h3>
+                <p>Faça o upload de um novo ficheiro para o acervo.</p>
+            </div>
+            <form class="login-form" id="uploadForm">
+                <div class="form-group">
+                    <label for="fileTitle">Título do Material</label>
+                    <input type="text" id="fileTitle" placeholder="Ex: Estudo de Romanos" required>
+                </div>
+                <div class="form-group">
+                    <label for="fileCategory">Categoria</label>
+                    <select id="fileCategory" class="form-select" required>
+                        <option value="Sermão">Sermão</option>
+                        <option value="Música">Música</option>
+                        <option value="Estudo">Estudo</option>
+                        <option value="Avisos">Avisos</option>
+                        <option value="Eventos">Eventos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fileAuthor">Autor / Pregador</label>
+                    <input type="text" id="fileAuthor" placeholder="Ex: Pr. João" required>
+                </div>
+                <div class="form-group">
+                    <label for="fileUpload">Ficheiro (PDF, PPTX)</label>
+                    <input type="file" id="fileUpload" class="file-input" required>
+                </div>
+                <button type="submit" class="btn-submit btn-ripple" id="submitUploadBtn">Salvar Material</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addLeaderModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('addLeaderModal').classList.add('hidden')"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <div class="modal-icon bg-blue-50 text-blue-500" style="background: #eff6ff;"><i
+                        class="fa-solid fa-user-plus text-blue-500"></i></div>
+                <h3>Adicionar Líder</h3>
+                <p>Dar acesso ao painel a um novo membro.</p>
+            </div>
+            <form class="login-form" id="addLeaderForm">
+                <div class="form-group">
+                    <label for="leaderName">Nome Completo</label>
+                    <input type="text" id="leaderName" placeholder="Ex: Maria Santos" required>
+                </div>
+                <div class="form-group">
+                    <label for="leaderRole">Cargo</label>
+                    <select id="leaderRole" class="form-select" required>
+                        <option value="Pastor(a)">Pastor(a)</option>
+                        <option value="Líder de Louvor">Líder de Louvor</option>
+                        <option value="Secretaria">Secretaria</option>
+                        <option value="Admin">Administrador IT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="leaderEmail">E-mail de Acesso</label>
+                    <input type="email" id="leaderEmail" placeholder="maria@igrejaviva.com" required>
+                </div>
+                <button type="submit" class="btn-submit btn-ripple" id="submitLeaderBtn">Criar Acesso</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/front-end/js/admin.js"></script>
+</body>
+
+</html>

@@ -1,20 +1,187 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acervo Digital - Igreja Viva</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="/front-end/styles/styles.css">
-    <title>Plataforma - MEJ</title>
 </head>
 
-<body>
-    <p>Teste</p>
+<body class="bg-pattern antialiased">
 
+    <header class="glass-header navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo-group" onclick="window.scrollTo(0,0)">
+                    <div class="logo-icon-wrapper group">
+                        <div class="logo-spinner animate-spin-slow"></div>
+                        <i class="fa-solid fa-cross logo-icon"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Igreja Viva</span>
+                        <span class="logo-subtitle">Acervo Online</span>
+                    </div>
+                </div>
 
+                <nav class="nav-desktop">
+                    <a href="#inicio" class="nav-link active">Início</a>
+                    <a href="#acervo" class="nav-link">Ficheiros</a>
+                    <a href="#sobre" class="nav-link">Sobre</a>
+                </nav>
 
+                <button class="btn-leadership btn-ripple" id="openLoginBtn">
+                    <i class="fa-solid fa-lock"></i> Liderança
+                </button>
+
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero-premium text-center">
+        <div class="particles-container" id="particles"></div>
+        <div class="hero-glow"></div>
+
+        <div class="container hero-content reveal active">
+            <div class="hero-badge hover-float">
+                <i class="fa-solid fa-sparkles text-gold"></i> Portal Atualizado 2026
+            </div>
+            <h1 class="hero-title tracking-tight">
+                O Conhecimento que <br />
+                <span class="text-gradient">Transforma Vidas</span>
+            </h1>
+            <p class="hero-description">
+                Um espaço dedicado para aceder, estudar e partilhar os nossos sermões, louvores e materiais de estudo.
+            </p>
+            <a href="#acervo" class="scroll-down-btn hover-float">
+                <i class="fa-solid fa-arrow-down"></i>
+            </a>
+        </div>
+
+        <div class="hero-wave">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path
+                    d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0Z"
+                    fill="var(--color-bg)"></path>
+            </svg>
+        </div>
+    </section>
+
+    <main id="acervo" class="container main-content relative">
+        <div class="section-header reveal">
+            <h2 class="section-title">Explore o Acervo</h2>
+            <div class="title-divider"></div>
+        </div>
+
+        <div class="search-section reveal hover-lift" style="transition-delay: 100ms;">
+            <div class="search-layout">
+                <div class="search-input-group">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Que material procura hoje?">
+                </div>
+                <div class="filters-scroll-area">
+                    <div class="filters-container" id="categoryFilters"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="statusMessage" class="status-message reveal"></div>
+
+        <div id="slidesGrid" class="cards-grid"></div>
+
+        <div id="emptyState" class="empty-state hidden fade-in">
+            <div class="empty-icon hover-float">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3>Nenhum resultado</h3>
+            <p>Não conseguimos encontrar o que procura com estes filtros.</p>
+            <button onclick="resetFilters()" class="btn-reset btn-ripple">
+                <i class="fa-solid fa-rotate-right"></i> Limpar Pesquisa
+            </button>
+        </div>
+    </main>
+
+    <section id="sobre" class="container main-content relative">
+        <div class="section-header reveal">
+            <h2 class="section-title">Sobre o Projeto</h2>
+            <div class="title-divider"></div>
+        </div>
+
+        <div class="about-grid reveal">
+            <div class="about-card hover-lift">
+                <div class="about-icon"><i class="fa-solid fa-hands-holding-circle"></i></div>
+                <h3>O Nosso Propósito</h3>
+                <p>Este portal nasceu para democratizar o acesso aos materiais da Igreja Viva. Queremos que cada membro
+                    tenha autoacesso facilitado aos PowerPoints, sermões e estudos, em qualquer lugar e a qualquer hora.
+                </p>
+            </div>
+            <div class="about-card hover-lift">
+                <div class="about-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                <h3>Tecnologia e Fé</h3>
+                <p>Desenvolvido como um projeto tecnológico social, unimos ferramentas modernas para servir a
+                    comunidade. Uma plataforma rápida, segura e pensada para todas as idades.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 Comunidade Igreja Viva. Todos os direitos reservados.</p>
+        <p class="footer-credit">Desenvolvido com <i class="fa-solid fa-heart pop-heart"></i> pelo projeto de extensão.
+        </p>
+    </footer>
+
+    <div id="loginModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+                <h3>Área da Liderança</h3>
+                <p>Acesso restrito para gestão do acervo.</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="lideranca@igrejaviva.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Palavra-passe</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit btn-ripple">Entrar no Painel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="viewerModal" class="modal-overlay hidden">
+        <div class="modal-content viewer-content">
+            <div class="viewer-header">
+                <h3 id="viewerTitle">Nome do Ficheiro</h3>
+                <button class="modal-close relative-close" id="closeViewerBtn"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="viewer-body">
+                <iframe id="fileIframe" class="viewer-iframe fade-in" src=""
+                    title="Visualizador de Documentos"></iframe>
+                <div id="viewerFallback" class="hidden viewer-fallback fade-in">
+                    <i class="fa-solid fa-file-arrow-down mb-2 text-4xl text-gold hover-float"></i>
+                    <p>Este tipo de ficheiro não suporta visualização direta.</p>
+                    <button class="btn-submit mt-4 w-auto px-6 btn-ripple" id="fallbackDownloadBtn">Fazer
+                        Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/front-end/js/script.js"></script>
 </body>
-
-<script src="./pages/index.js"></script>
 
 </html>
