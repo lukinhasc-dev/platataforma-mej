@@ -2,20 +2,20 @@
     --font-sans: 'Outfit', sans-serif;
     --font-serif: 'Playfair Display', serif;
 
-    --color-dark: #0B1121;
-    --color-blue: #1e293b;
+    --color-dark: #1f3447;
+    --color-blue: #1f3447;
     --color-gold: #D4AF37;
     --color-gold-light: #F3E5AB;
     --color-surface: #ffffff;
     --color-bg: #F8FAFC;
 
-    --color-slate-800: #1e293b;
+    --color-slate-800: #1f3447;
     --color-gray-100: #f3f4f6;
     --color-gray-200: #e5e7eb;
     --color-gray-300: #d1d5db;
     --color-gray-400: #9ca3af;
-    --color-gray-500: #6b7280;
-    --color-gray-700: #374151;
+    --color-gray-500: #3f4757;
+    --color-gray-700: #1f3447;
 }
 
 * {
@@ -550,6 +550,28 @@ body {
     background: radial-gradient(circle, rgba(212, 175, 55, 0.8) 0%, rgba(212, 175, 55, 0) 70%);
     border-radius: 50%;
     animation: float-up infinite linear;
+    bottom: -50px;
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(-10vh) scale(1);
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-120vh) scale(0.5);
+        opacity: 0;
+    }
 }
 
 .hero-glow {
