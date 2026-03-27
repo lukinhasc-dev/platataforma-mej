@@ -1,3 +1,9 @@
+import { getAllLideres, createLider, deleteLider, updateLider } from "../api/lideres.index.js"
+
+// Variáveis de estado global (no escopo do módulo)
+let adminSlides = [];
+let adminLeaders = [];
+
 window.showToast = function (message, type = 'success') {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -15,25 +21,18 @@ window.showToast = function (message, type = 'success') {
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
 };
 
-let adminSlides = [
-    { id: 1, title: 'O Poder da Esperança', category: 'Sermão', author: 'Pr. Marcos Silva', date: '08 Mar 2026' },
-    { id: 2, title: 'Louvores - Domingo Manhã', category: 'Música', author: 'Min. Louvor', date: '08 Mar 2026' },
-    { id: 3, title: 'Informativo Semanal', category: 'Avisos', author: 'Secretaria', date: '08 Mar 2026' },
-    { id: 4, title: 'Estudo: O Livro de João', category: 'Estudo', author: 'Pra. Ana Costa', date: '04 Mar 2026' },
-    { id: 5, title: 'Acampamento Jovem 2026', category: 'Eventos', author: 'Rede Jovem', date: '01 Mar 2026' }
-];
-
-let adminLeaders = [
-    { id: 1, name: 'Marcos Silva', role: 'Pastor(a)', email: 'marcos@igrejaviva.com' },
-    { id: 2, name: 'Ana Costa', role: 'Pastor(a)', email: 'ana@igrejaviva.com' },
-    { id: 3, name: 'João Pedro', role: 'Líder de Louvor', email: 'louvor@igrejaviva.com' },
-    { id: 4, name: 'Sara Mendes', role: 'Secretaria', email: 'secretaria@igrejaviva.com' }
-];
-
-function initAdmin() {
+async function initAdmin() {
     setupMobileSidebar();
     setupModals();
     setupAcervoSearchAndFilter();
+
+    try {
+        adminLeaders = await getAllLideres();
+        // adminSlides = await getAllFicheiros(); // Implementar depois
+    } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+        window.showToast("Erro ao carregar dados do servidor", "error");
+    }
 
     document.getElementById('totalFilesCount').innerText = adminSlides.length;
     document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
@@ -42,6 +41,9 @@ function initAdmin() {
     renderAcervoTable(adminSlides);
     renderLiderancaTable();
 }
+
+// Tornar initAdmin acessível se necessário, mas como é module, chamamos aqui no fim
+window.initAdmin = initAdmin;
 
 window.switchView = function (viewId, element) {
     document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
@@ -80,7 +82,7 @@ function renderDashboardTable() {
 function renderAcervoTable(dataToRender) {
     const tbody = document.getElementById('acervoTableBody');
     if (dataToRender.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4 fade-in">Nenhum ficheiro encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4 fade-in">Nenhum arquivo encontrado.</td></tr>`;
         return;
     }
     tbody.innerHTML = dataToRender.map((slide, index) => `
@@ -99,15 +101,18 @@ function renderAcervoTable(dataToRender) {
     `).join('');
 }
 
-function renderLiderancaTable() {
+//Função para renderizar a tabela de lideres
+async function renderLiderancaTable() {
     const tbody = document.getElementById('liderancaTableBody');
+    adminLeaders = await getAllLideres();
+
     tbody.innerHTML = adminLeaders.map((leader, index) => `
         <tr style="animation: fadeIn 0.3s ease forwards; animation-delay: ${index * 0.05}s; opacity: 0;">
             <td class="font-bold text-dark flex align-center gap-2">
                 <div class="author-icon"><i class="fa-solid fa-user"></i></div>
-                ${leader.name}
+                ${leader.nome}
             </td>
-            <td><span class="text-sm font-medium text-gray-700">${leader.role}</span></td>
+            <td><span class="text-sm font-medium text-gray-700">${leader.cargo}</span></td>
             <td class="text-gray-500 hidden-mobile">${leader.email}</td>
             <td>
                 <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteLeader(${leader.id})" title="Revogar Acesso"><i class="fa-solid fa-user-xmark"></i></button>
@@ -117,21 +122,26 @@ function renderLiderancaTable() {
 }
 
 window.deleteFile = function (id) {
-    if (confirm('Tem a certeza que deseja apagar este ficheiro?')) {
+    if (confirm('Tem certeza que deseja apagar este arquivo?')) {
         adminSlides = adminSlides.filter(s => s.id !== id);
         renderAcervoTable(adminSlides);
         renderDashboardTable();
         document.getElementById('totalFilesCount').innerText = adminSlides.length;
-        showToast('Ficheiro apagado.', 'error');
+        showToast('Arquivo apagado.', 'error');
     }
 };
 
-window.deleteLeader = function (id) {
-    if (confirm('Tem a certeza que deseja revogar o acesso a este líder?')) {
-        adminLeaders = adminLeaders.filter(l => l.id !== id);
-        renderLiderancaTable();
-        document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
-        showToast('Acesso revogado.', 'error');
+window.deleteLeader = async function (id) {
+    if (confirm('Tem certeza que deseja revogar o acesso a este líder?')) {
+        try {
+            await deleteLider(id);
+            showToast('Acesso revogado.', 'error');
+            await renderLiderancaTable();
+            document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+        } catch (error) {
+            console.error("Erro ao deletar líder:", error);
+            showToast('Erro ao remover líder.', 'error');
+        }
     }
 };
 
@@ -172,7 +182,7 @@ function setupModals() {
     uploadForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const originalText = submitUploadBtn.innerHTML;
-        submitUploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A guardar...';
+        submitUploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
         submitUploadBtn.disabled = true;
 
         setTimeout(() => {
@@ -184,7 +194,7 @@ function setupModals() {
             renderAcervoTable(adminSlides); renderDashboardTable();
             document.getElementById('totalFilesCount').innerText = adminSlides.length;
 
-            showToast(`Ficheiro "${title}" adicionado!`, 'success');
+            showToast(`Arquivo "${title}" adicionado!`, 'success');
             document.getElementById('uploadModal').classList.add('hidden');
             uploadForm.reset(); submitUploadBtn.innerHTML = originalText; submitUploadBtn.disabled = false;
         }, 1200);
@@ -193,25 +203,35 @@ function setupModals() {
     const addLeaderForm = document.getElementById('addLeaderForm');
     const submitLeaderBtn = document.getElementById('submitLeaderBtn');
 
-    addLeaderForm.addEventListener('submit', (e) => {
+    addLeaderForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const originalText = submitLeaderBtn.innerHTML;
-        submitLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A criar acesso...';
+        submitLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando acesso...';
         submitLeaderBtn.disabled = true;
 
-        setTimeout(() => {
-            const name = document.getElementById('leaderName').value;
-            const role = document.getElementById('leaderRole').value;
+        try {
+            const nome = document.getElementById('leaderName').value;
+            const cargo = document.getElementById('leaderRole').value;
             const email = document.getElementById('leaderEmail').value;
+            const senha = document.getElementById('leaderPassword').value;
 
-            adminLeaders.unshift({ id: Date.now(), name: name, role: role, email: email });
-            renderLiderancaTable(); document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+            await createLider({ nome, cargo, email, senha });
 
-            showToast(`Acesso criado para ${name}!`, 'success');
+            await renderLiderancaTable();
+            document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+
+            showToast(`Acesso criado para ${nome}!`, 'success');
             document.getElementById('addLeaderModal').classList.add('hidden');
-            addLeaderForm.reset(); submitLeaderBtn.innerHTML = originalText; submitLeaderBtn.disabled = false;
-        }, 1200);
+            addLeaderForm.reset();
+        } catch (error) {
+            console.error("Erro ao criar líder:", error);
+            showToast("Erro ao criar líder", "error");
+        } finally {
+            submitLeaderBtn.innerHTML = originalText;
+            submitLeaderBtn.disabled = false;
+        }
     });
 }
 
-initAdmin();
+// Inicialização
+document.addEventListener('DOMContentLoaded', initAdmin);
