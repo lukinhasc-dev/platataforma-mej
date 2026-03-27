@@ -1,4 +1,5 @@
 import { getAllLideres, createLider, deleteLider, updateLider } from "../api/lideres.index.js"
+import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downloadMaterial } from "../api/material.index.js"
 
 // Variáveis de estado global (no escopo do módulo)
 let adminSlides = [];
@@ -28,7 +29,7 @@ async function initAdmin() {
 
     try {
         adminLeaders = await getAllLideres();
-        // adminSlides = await getAllFicheiros(); // Implementar depois
+        adminSlides = await getAllMateriais();
     } catch (error) {
         console.error("Erro ao carregar dados:", error);
         window.showToast("Erro ao carregar dados do servidor", "error");
@@ -45,6 +46,8 @@ async function initAdmin() {
 // Tornar initAdmin acessível se necessário, mas como é module, chamamos aqui no fim
 window.initAdmin = initAdmin;
 
+
+//Função para trocar de view
 window.switchView = function (viewId, element) {
     document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
     element.classList.add('active');
@@ -68,33 +71,38 @@ window.switchView = function (viewId, element) {
     }
 };
 
-function renderDashboardTable() {
+//Função para renderizar a tabela do dashboard
+async function renderDashboardTable() {
     const tbody = document.getElementById('dashboardTableBody');
-    tbody.innerHTML = adminSlides.slice(0, 3).map((slide, index) => `
+    adminSlides = await getAllMateriais();
+    tbody.innerHTML = adminSlides.slice(0, 3).map((material, index) => `
         <tr style="animation: fadeIn 0.3s ease forwards; animation-delay: ${index * 0.1}s; opacity: 0;">
-            <td class="font-bold text-dark">${slide.title}</td>
-            <td><span class="badge-category text-xs"><i class="fa-solid fa-tag mr-1"></i> ${slide.category}</span></td>
-            <td class="text-gray-500">${slide.date}</td>
+            <td class="font-bold text-dark">${material.titulo_material}</td>
+            <td><span class="badge-category text-xs"><i class="fa-solid fa-tag mr-1"></i> ${material.categoria_material}</span></td>
+            <td class="text-gray-500">${new Date(material.created_at).toLocaleDateString('pt-BR')}</td>
         </tr>
     `).join('');
 }
 
-function renderAcervoTable(dataToRender) {
+//Função para renderizar a tabela do acervo
+async function renderAcervoTable(dataToRender) {
     const tbody = document.getElementById('acervoTableBody');
+    adminSlides = await getAllMateriais();
+    dataToRender = adminSlides;
     if (dataToRender.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4 fade-in">Nenhum arquivo encontrado.</td></tr>`;
         return;
     }
-    tbody.innerHTML = dataToRender.map((slide, index) => `
+    tbody.innerHTML = dataToRender.map((material, index) => `
         <tr style="animation: fadeIn 0.3s ease forwards; animation-delay: ${index * 0.05}s; opacity: 0;">
-            <td class="font-bold text-dark">${slide.title}</td>
-            <td><span class="badge-category text-xs"><i class="fa-solid fa-tag mr-1"></i> ${slide.category}</span></td>
-            <td class="text-gray-500 hidden-mobile">${slide.author}</td>
-            <td class="text-gray-500 hidden-mobile">${slide.date}</td>
+            <td class="font-bold text-dark">${material.titulo_material}</td>
+            <td><span class="badge-category text-xs"><i class="fa-solid fa-tag mr-1"></i> ${material.categoria_material}</span></td>
+            <td class="text-gray-500 hidden-mobile">${material.autor_material}</td>
+            <td class="text-gray-500 hidden-mobile">${new Date(material.created_at).toLocaleDateString('pt-BR')}</td>
             <td>
                 <div class="flex gap-2">
-                    <button class="action-btn text-blue-500 hover:bg-blue-50 hover-lift" onclick="showToast('Ação de edição em breve!', 'success')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteFile(${slide.id})"><i class="fa-solid fa-trash"></i></button>
+                    <button class="action-btn text-green-500 hover:bg-green-50 hover-lift" onclick="downloadMaterial(${material.id}, '${material.titulo_material}')" title="Baixar"><i class="fa-solid fa-download"></i></button>
+                    <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteFile(${material.id})"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </td>
         </tr>
@@ -121,16 +129,23 @@ async function renderLiderancaTable() {
     `).join('');
 }
 
-window.deleteFile = function (id) {
+//Função para deletar arquivo
+window.deleteFile = async function (id) {
     if (confirm('Tem certeza que deseja apagar este arquivo?')) {
-        adminSlides = adminSlides.filter(s => s.id !== id);
-        renderAcervoTable(adminSlides);
-        renderDashboardTable();
-        document.getElementById('totalFilesCount').innerText = adminSlides.length;
-        showToast('Arquivo apagado.', 'error');
+        try {
+            await deleteMaterial(id);
+            showToast('Arquivo apagado.', 'error');
+            await renderAcervoTable(adminSlides);
+            renderDashboardTable();
+            document.getElementById('totalFilesCount').innerText = adminSlides.length;
+        } catch (error) {
+            console.error("Erro ao deletar arquivo:", error);
+            showToast('Erro ao remover arquivo.', 'error');
+        }
     }
 };
 
+//Função para deletar lider
 window.deleteLeader = async function (id) {
     if (confirm('Tem certeza que deseja revogar o acesso a este líder?')) {
         try {
@@ -145,6 +160,7 @@ window.deleteLeader = async function (id) {
     }
 };
 
+//Função para buscar e filtrar arquivos
 function setupAcervoSearchAndFilter() {
     const searchInput = document.getElementById('adminSearchInput');
     const categorySelect = document.getElementById('adminCategoryFilter');
@@ -152,9 +168,9 @@ function setupAcervoSearchAndFilter() {
     function filterData() {
         const searchTerm = searchInput.value.toLowerCase();
         const category = categorySelect.value;
-        const filtered = adminSlides.filter(slide => {
-            const matchSearch = slide.title.toLowerCase().includes(searchTerm) || slide.author.toLowerCase().includes(searchTerm);
-            const matchCat = category === 'Todos' || slide.category === category;
+        const filtered = adminSlides.filter(material => {
+            const matchSearch = material.titulo_material.toLowerCase().includes(searchTerm) || material.autor_material.toLowerCase().includes(searchTerm);
+            const matchCat = category === 'Todos' || material.categoria_material === category;
             return matchSearch && matchCat;
         });
         renderAcervoTable(filtered);
@@ -175,29 +191,48 @@ function setupMobileSidebar() {
     overlay.addEventListener('click', closeSidebar);
 }
 
+
 function setupModals() {
     const uploadForm = document.getElementById('uploadForm');
     const submitUploadBtn = document.getElementById('submitUploadBtn');
 
-    uploadForm.addEventListener('submit', (e) => {
+    uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const originalText = submitUploadBtn.innerHTML;
         submitUploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
         submitUploadBtn.disabled = true;
 
-        setTimeout(() => {
-            const title = document.getElementById('fileTitle').value;
-            const category = document.getElementById('fileCategory').value;
-            const author = document.getElementById('fileAuthor').value;
+        try {
+            const titulo_material = document.getElementById('fileTitle').value;
+            const categoria_material = document.getElementById('fileCategory').value;
+            const autor_material = document.getElementById('fileAuthor').value;
+            const fileInput = document.getElementById('fileUpload');
 
-            adminSlides.unshift({ id: Date.now(), title: title, category: category, author: author, date: 'Hoje' });
-            renderAcervoTable(adminSlides); renderDashboardTable();
+            const formData = new FormData();
+            formData.append('titulo_material', titulo_material);
+            formData.append('categoria_material', categoria_material);
+            formData.append('autor_material', autor_material);
+            if (fileInput && fileInput.files[0]) {
+                formData.append('material', fileInput.files[0]);
+            }
+
+            await createMaterial(formData);
+
+            adminSlides = await getAllMateriais();
+            renderAcervoTable(adminSlides);
+            renderDashboardTable();
             document.getElementById('totalFilesCount').innerText = adminSlides.length;
 
-            showToast(`Arquivo "${title}" adicionado!`, 'success');
+            showToast(`Arquivo "${titulo_material}" adicionado!`, 'success');
             document.getElementById('uploadModal').classList.add('hidden');
-            uploadForm.reset(); submitUploadBtn.innerHTML = originalText; submitUploadBtn.disabled = false;
-        }, 1200);
+            uploadForm.reset();
+        } catch (error) {
+            console.error("Erro ao criar material:", error);
+            showToast('Erro ao salvar arquivo.', 'error');
+        } finally {
+            submitUploadBtn.innerHTML = originalText;
+            submitUploadBtn.disabled = false;
+        }
     });
 
     const addLeaderForm = document.getElementById('addLeaderForm');
