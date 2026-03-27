@@ -1,9 +1,10 @@
 import { Router } from "express";
+import lideresRoutes from "./lideres.routes";
+import materiaisRoutes from "./materiais.routes";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-    res.send("Hello World!");
-});
+router.use("/lideres", lideresRoutes);
+router.use("/materiais", materiaisRoutes);
 
 export default router;

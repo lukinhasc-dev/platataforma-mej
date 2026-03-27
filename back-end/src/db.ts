@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { createClient } from "@supabase/supabase-js";
+import { Pool } from "pg";
 
 dotenv.config();
 
@@ -10,6 +10,8 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error("Credenciais do Supabase não encontradas no arquivo .env");
 }
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+})
 
-export default supabase
+export default pool
