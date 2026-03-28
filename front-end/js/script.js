@@ -1,4 +1,4 @@
-import { getAllMateriais } from "../api/material.index.js";
+import { getAllMateriais, downloadMaterial } from "../api/material.index.js";
 import { getAllLideres, loginLider } from "../api/lideres.index.js";
 
 let slides = [];
@@ -35,6 +35,8 @@ async function loadLideres() {
         return [];
     }
 }
+
+
 
 
 window.showToast = async function (message, type = 'success') {
@@ -201,7 +203,7 @@ async function setupViewerModal() {
             iframe.classList.remove('hidden'); fallback.classList.add('hidden'); iframe.src = fileUrl;
         } else {
             iframe.classList.add('hidden'); fallback.classList.remove('hidden');
-            document.getElementById('fallbackDownloadBtn').onclick = () => window.open(fileUrl, '_blank');
+            document.getElementById('fallbackDownloadBtn').onclick = () => window.downloadMaterial(file.id, file.titulo_material);
         }
 
         viewerModal.classList.remove('hidden');
@@ -280,8 +282,8 @@ async function renderSlides() {
                     <div class="card-footer">
                         <div class="card-date"><i class="fa-regular fa-calendar"></i> ${data}</div>
                         <div class="card-actions">
-                            <button onclick="openViewer(${slide.id})" class="btn-action btn-view hover-lift"><i class="fa-regular fa-eye"></i></button>
-                            <a href="${slide.link_material || '#'}" target="_blank" class="btn-action btn-download btn-ripple hover-lift"><i class="fa-solid fa-download"></i></a>
+                            <button onclick="openViewer(${slide.id})" class="btn-action btn-view hover-lift" title="Visualizar"><i class="fa-regular fa-eye"></i></button>
+                            <button onclick="window.downloadMaterial(${slide.id}, '${slide.titulo_material}')" class="btn-action btn-download btn-ripple hover-lift" title="Baixar"><i class="fa-solid fa-download"></i></button>
                         </div>
                     </div>
                 </div>
@@ -294,5 +296,15 @@ async function renderSlides() {
     }
 }
 
+// Tornar acessível globalmente
+window.downloadMaterial = async (id, filename) => {
+    try {
+        window.showToast("Iniciando download...", "success");
+        await downloadMaterial(id, filename);
+    } catch (error) {
+        console.error("Erro no download:", error);
+        window.showToast("Erro ao baixar arquivo", "error");
+    }
+};
 
 await init();
