@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,10 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/front-end/styles/styles.css">
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="/front-end/js/admin.js"></script>
 </head>
 
 <body class="bg-pattern antialiased admin-body">
@@ -38,7 +42,7 @@
 
             <div class="sidebar-footer">
                 <a href="/front-end/index.html" class="sidebar-link text-red-400 hover:text-red-300"><i
-                        class="fa-solid fa-arrow-right-from-bracket"></i> Terminar Sessão</a>
+                        class="fa-solid fa-arrow-right-from-bracket"></i> Sair</a>
             </div>
         </aside>
 
@@ -54,13 +58,13 @@
                                 class="fa-solid fa-bars"></i></button>
                         <div>
                             <h1 class="text-2xl font-bold text-dark tracking-tight">Bem-vindo, Liderança</h1>
-                            <p class="text-sm text-gray-500 hidden-mobile">Resumo das atividades e ficheiros recentes.
+                             <p class="text-sm text-gray-500 hidden-mobile">Resumo das atividades e arquivos recentes.
                             </p>
                         </div>
                     </div>
                     <button class="btn-ripple btn-leadership hover-lift"
                         onclick="document.getElementById('uploadModal').classList.remove('hidden')">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden-mobile">Novo Ficheiro</span>
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden-mobile">Novo Arquivo</span>
                     </button>
                 </header>
 
@@ -68,7 +72,7 @@
                     <div class="stat-card hover-lift">
                         <div class="stat-icon bg-blue-50 text-blue-500"><i class="fa-solid fa-file-lines"></i></div>
                         <div class="stat-info">
-                            <h3>Total de Ficheiros</h3>
+                            <h3>Total de Arquivos</h3>
                             <p id="totalFilesCount">124</p>
                         </div>
                     </div>
@@ -90,7 +94,7 @@
 
                 <div class="admin-panel mt-8 hover-lift-slight">
                     <div class="panel-header">
-                        <h2 class="text-lg font-bold text-dark">Últimos Ficheiros Adicionados</h2>
+                        <h2 class="text-lg font-bold text-dark">Últimos Arquivos Adicionados</h2>
                     </div>
                     <div class="table-responsive">
                         <table class="data-table">
@@ -116,13 +120,13 @@
                                 class="fa-solid fa-bars"></i></button>
                         <div>
                             <h1 class="text-2xl font-bold text-dark tracking-tight">Gerir Acervo</h1>
-                            <p class="text-sm text-gray-500 hidden-mobile">Edite ou remova ficheiros existentes no
+                            <p class="text-sm text-gray-500 hidden-mobile">Edite ou remova arquivos existentes no
                                 portal.</p>
                         </div>
                     </div>
                     <button class="btn-ripple btn-leadership hover-lift"
                         onclick="document.getElementById('uploadModal').classList.remove('hidden')">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden-mobile">Novo Ficheiro</span>
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden-mobile">Novo Arquivo</span>
                     </button>
                 </header>
 
@@ -163,74 +167,74 @@
                             onclick="document.getElementById('adminSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.remove('hidden');"><i
                                 class="fa-solid fa-bars"></i></button>
                         <div>
-                            <h1 class="text-2xl font-bold text-dark tracking-tight">Equipa de Liderança</h1>
-                            <p class="text-sm text-gray-500 hidden-mobile">Faça a gestão dos acessos ao painel de
-                                administração.</p>
-                        </div>
-                    </div>
-                    <button class="btn-ripple btn-leadership hover-lift"
-                        onclick="document.getElementById('addLeaderModal').classList.remove('hidden')">
-                        <i class="fa-solid fa-user-plus"></i> <span class="hidden-mobile">Novo Líder</span>
-                    </button>
-                </header>
-
-                <div class="admin-panel mt-6 hover-lift-slight">
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Cargo</th>
-                                    <th>E-mail</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="liderancaTableBody">
-                            </tbody>
-                        </table>
-                    </div>
+                    <h1 class="text-2xl font-bold text-dark tracking-tight">Equipe de Liderança</h1>
+                    <p class="text-sm text-gray-500 hidden-mobile">Faça a gestão dos acessos ao painel de
+                        administração.</p>
                 </div>
             </div>
+            <button class="btn-ripple btn-leadership hover-lift"
+                onclick="document.getElementById('addLeaderModal').classList.remove('hidden')">
+                <i class="fa-solid fa-user-plus"></i> <span class="hidden-mobile">Novo Líder</span>
+            </button>
+        </header>
 
-        </main>
-    </div>
-
-    <div id="uploadModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" onclick="document.getElementById('uploadModal').classList.add('hidden')"><i
-                    class="fa-solid fa-xmark"></i></button>
-            <div class="modal-header">
-                <div class="modal-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                <h3>Adicionar Material</h3>
-                <p>Faça o upload de um novo ficheiro para o acervo.</p>
+        <div class="admin-panel mt-6 hover-lift-slight">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>E-mail</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liderancaTableBody">
+                    </tbody>
+                </table>
             </div>
-            <form class="login-form" id="uploadForm">
-                <div class="form-group">
-                    <label for="fileTitle">Título do Material</label>
-                    <input type="text" id="fileTitle" placeholder="Ex: Estudo de Romanos" required>
-                </div>
-                <div class="form-group">
-                    <label for="fileCategory">Categoria</label>
-                    <select id="fileCategory" class="form-select" required>
-                        <option value="Sermão">Sermão</option>
-                        <option value="Música">Música</option>
-                        <option value="Estudo">Estudo</option>
-                        <option value="Avisos">Avisos</option>
-                        <option value="Eventos">Eventos</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="fileAuthor">Autor / Pregador</label>
-                    <input type="text" id="fileAuthor" placeholder="Ex: Pr. João" required>
-                </div>
-                <div class="form-group">
-                    <label for="fileUpload">Ficheiro (PDF, PPTX)</label>
-                    <input type="file" id="fileUpload" class="file-input" required>
-                </div>
-                <button type="submit" class="btn-submit btn-ripple" id="submitUploadBtn">Salvar Material</button>
-            </form>
         </div>
     </div>
+
+</main>
+</div>
+
+<div id="uploadModal" class="modal-overlay hidden">
+<div class="modal-content">
+    <button class="modal-close" onclick="document.getElementById('uploadModal').classList.add('hidden')"><i
+            class="fa-solid fa-xmark"></i></button>
+    <div class="modal-header">
+        <div class="modal-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h3>Adicionar Material</h3>
+        <p>Faça o upload de um novo arquivo para o acervo.</p>
+    </div>
+    <form class="login-form" id="uploadForm">
+        <div class="form-group">
+            <label for="fileTitle">Título do Material</label>
+            <input type="text" id="fileTitle" placeholder="Ex: Estudo de Romanos" required>
+        </div>
+        <div class="form-group">
+            <label for="fileCategory">Categoria</label>
+            <select id="fileCategory" class="form-select" required>
+                <option value="Sermão">Sermão</option>
+                <option value="Música">Música</option>
+                <option value="Estudo">Estudo</option>
+                <option value="Avisos">Avisos</option>
+                <option value="Eventos">Eventos</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="fileAuthor">Autor / Pregador</label>
+            <input type="text" id="fileAuthor" placeholder="Ex: Pr. João" required>
+        </div>
+        <div class="form-group">
+            <label for="fileUpload">Arquivo (PDF, PPTX)</label>
+            <input type="file" id="fileUpload" class="file-input" required>
+        </div>
+        <button type="submit" class="btn-submit btn-ripple" id="submitUploadBtn">Salvar Material</button>
+    </form>
+</div>
+</div>
 
     <div id="addLeaderModal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -269,7 +273,6 @@
         </div>
     </div>
 
-    <script src="/front-end/js/admin.js"></script>
 </body>
 
 </html>

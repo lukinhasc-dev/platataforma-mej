@@ -5,6 +5,6 @@ import materiaisRoutes from "./materiais.routes";
 const router = Router();
 
 router.use("/lideres", lideresRoutes);
-router.use("/materiais", materiaisRoutes);
+router.use("/material", materiaisRoutes);
 
 export default router;
