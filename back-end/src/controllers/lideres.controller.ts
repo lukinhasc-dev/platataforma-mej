@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { getAll, create, update, remove } from '../service/lideres.service'
+import { getAll, create, update, remove, login } from '../service/lideres.service'
 
 export class LideresController {
     async getAllLideres(req: Request, res: Response) {
@@ -60,6 +60,19 @@ export class LideresController {
         } catch (error: any) {
             return res.status(500).json({
                 message: error.message || "Erro interno do servidor"
+            })
+        }
+    }
+
+    async loginLider(req: Request, res: Response) {
+        const { email, senha } = req.body
+        try {
+            const lider = await login(email, senha)
+            return res.status(200).json({ success: true, lider })
+        } catch (error: any) {
+            return res.status(401).json({
+                success: false,
+                message: error.message || "Email ou senha incorretos."
             })
         }
     }

@@ -102,7 +102,11 @@ export class MaterialController {
                 })
             }
 
-            return res.download(filePath)
+            // Pegamos a extensão original do arquivo salvo no disco
+            const extension = path.extname(filePath);
+            const downloadName = `${material.titulo_material}${extension}`;
+
+            return res.download(filePath, downloadName);
         } catch (error: any) {
             return res.status(500).json({
                 message: error.message || "Erro ao processar o download"

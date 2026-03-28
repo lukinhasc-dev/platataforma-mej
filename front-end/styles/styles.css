@@ -1,58 +1,61 @@
 :root {
     /* Fontes */
-    --font-sans: 'Outfit', sans-serif;
-    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Poppins', sans-serif;
+    --font-serif: 'Poppins', serif;
 
     /* Cores Principais (Brand) */
     --color-dark: #112838;
-    --color-blue: #1f3449;
-    --color-accent: #3b82f6;
-    --color-accent-light: #60a5fa;
-    --color-accent-dark: #2563eb;
+    /* Primária */
+    --color-blue: #1F3449;
+    /* Secundária */
+    --color-accent: #24394A;
+    /* Terceira */
+    --color-accent-light: #2c4a61;
+    --color-accent-dark: #1a2c3a;
     --color-surface: #ffffff;
-    --color-bg: #f8fafc;
+    --color-bg: #f4f7f9;
 
-    /* Tons de Cinza */
+    /* Tons de Cinza (Harmonizados com o Azul) */
     --color-gray-50: #f8fafc;
-    --color-gray-100: #f3f4f6;
-    --color-gray-200: #e5e7eb;
-    --color-gray-300: #d1d5db;
-    --color-gray-400: #9ca3af;
-    --color-gray-500: #3f4757;
-    --color-gray-700: #1f3449;
-    --color-gray-800: #1f3449;
+    --color-gray-100: #f1f5f9;
+    --color-gray-200: #e2e8f0;
+    --color-gray-300: #cbd5e1;
+    --color-gray-400: #94a3b8;
+    --color-gray-500: #64748b;
+    --color-gray-700: #334155;
+    --color-gray-800: #1e293b;
 
     /* Feedback */
-    --color-success: #22c55e;
+    --color-success: #10b981;
     --color-error: #ef4444;
     --color-error-light: #f87171;
-    --color-warning: #f97316;
+    --color-warning: #f59e0b;
     --color-info: #3b82f6;
 
     /* Backgrounds leves de feedback */
-    --bg-error-light: #fef2f2;
-    --bg-warning-light: #fff7ed;
+    --bg-error-light: #fff1f2;
+    --bg-warning-light: #fffbeb;
     --bg-info-light: #eff6ff;
     --bg-success-light: #f0fdf4;
 
-    /* Efeitos Alpha (Baseados em Accent e Dark) */
-    --color-accent-alpha-10: rgba(59, 130, 246, 0.1);
-    --color-accent-alpha-25: rgba(59, 130, 246, 0.25);
-    --color-accent-alpha-30: rgba(59, 130, 246, 0.3);
-    --color-accent-alpha-40: rgba(59, 130, 246, 0.4);
-    --color-accent-alpha-50: rgba(59, 130, 246, 0.5);
+    /* Efeitos Alpha (Baseados no Brand Dark #112838) */
+    --color-accent-alpha-10: #1128381a;
+    --color-accent-alpha-25: #11283840;
+    --color-accent-alpha-30: #1128384d;
+    --color-accent-alpha-40: #11283866;
+    --color-accent-alpha-50: #11283880;
 
-    --color-white-alpha-05: rgba(255, 255, 255, 0.05);
-    --color-white-alpha-08: rgba(255, 255, 255, 0.08);
-    --color-white-alpha-10: rgba(255, 255, 255, 0.1);
-    --color-white-alpha-15: rgba(255, 255, 255, 0.15);
-    --color-white-alpha-20: rgba(255, 255, 255, 0.2);
+    --color-white-alpha-05: #ffffff0d;
+    --color-white-alpha-08: #ffffff14;
+    --color-white-alpha-10: #ffffff1a;
+    --color-white-alpha-15: #ffffff26;
+    --color-white-alpha-20: #ffffff33;
 
-    --color-dark-alpha-00: rgba(11, 17, 33, 0.0);
-    --color-dark-alpha-15: rgba(11, 17, 33, 0.15);
-    --color-dark-alpha-20: rgba(11, 17, 33, 0.2);
-    --color-dark-alpha-70: rgba(11, 17, 33, 0.7);
-    --color-dark-alpha-85: rgba(11, 17, 33, 0.85);
+    --color-dark-alpha-00: #11283800;
+    --color-dark-alpha-15: #11283826;
+    --color-dark-alpha-20: #11283833;
+    --color-dark-alpha-70: #112838b3;
+    --color-dark-alpha-85: #112838d9;
 
     /* Outros */
     --color-scrollbar-track: #f1f5f9;
@@ -412,18 +415,37 @@ body {
     cursor: pointer;
 }
 
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-white-alpha-08);
+    margin-bottom: 1.5rem;
+}
+
 .logo-icon-wrapper {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 8px;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 12px;
     background-color: var(--color-white-alpha-05);
     border: 1px solid var(--color-white-alpha-15);
     overflow: hidden;
     transition: all 0.5s;
+    flex-shrink: 0;
+}
+
+.logo-icon-2 {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 10;
+    transition: transform 0.4s;
 }
 
 .logo-group:hover .logo-icon-wrapper {
@@ -463,8 +485,14 @@ body {
     transition: transform 0.4s;
 }
 
-.logo-group:hover .logo-icon {
-    transform: scale(1.1);
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.5rem 0 2.5rem 0;
+    border-bottom: 1px solid var(--color-white-alpha-08);
+    margin-bottom: 1.5rem;
 }
 
 .logo-text {

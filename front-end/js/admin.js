@@ -43,11 +43,9 @@ async function initAdmin() {
     renderLiderancaTable();
 }
 
-// Tornar initAdmin acessível se necessário, mas como é module, chamamos aqui no fim
 window.initAdmin = initAdmin;
 
-
-//Função para trocar de view
+// Função para trocar de view
 window.switchView = function (viewId, element) {
     document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
     element.classList.add('active');
@@ -71,7 +69,7 @@ window.switchView = function (viewId, element) {
     }
 };
 
-//Função para renderizar a tabela do dashboard
+// Função para renderizar a tabela do dashboard
 async function renderDashboardTable() {
     const tbody = document.getElementById('dashboardTableBody');
     adminSlides = await getAllMateriais();
@@ -84,7 +82,7 @@ async function renderDashboardTable() {
     `).join('');
 }
 
-//Função para renderizar a tabela do acervo
+// Função para renderizar a tabela do acervo
 async function renderAcervoTable(dataToRender) {
     const tbody = document.getElementById('acervoTableBody');
     adminSlides = await getAllMateriais();
@@ -102,14 +100,15 @@ async function renderAcervoTable(dataToRender) {
             <td>
                 <div class="flex gap-2">
                     <button class="action-btn text-green-500 hover:bg-green-50 hover-lift" onclick="downloadMaterial(${material.id}, '${material.titulo_material}')" title="Baixar"><i class="fa-solid fa-download"></i></button>
-                    <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteFile(${material.id})"><i class="fa-solid fa-trash"></i></button>
+                    <button class="action-btn text-blue-500 hover:bg-blue-50 hover-lift" onclick="editFile(${material.id})" title="Editar"><i class="fa-solid fa-edit"></i></button>
+                    <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteFile(${material.id})" title="Apagar"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </td>
         </tr>
     `).join('');
 }
 
-//Função para renderizar a tabela de lideres
+// Função para renderizar a tabela de líderes
 async function renderLiderancaTable() {
     const tbody = document.getElementById('liderancaTableBody');
     adminLeaders = await getAllLideres();
@@ -123,13 +122,16 @@ async function renderLiderancaTable() {
             <td><span class="text-sm font-medium text-gray-700">${leader.cargo}</span></td>
             <td class="text-gray-500 hidden-mobile">${leader.email}</td>
             <td>
-                <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteLeader(${leader.id})" title="Revogar Acesso"><i class="fa-solid fa-user-xmark"></i></button>
+                <div class="flex gap-2">
+                    <button class="action-btn text-blue-500 hover:bg-blue-50 hover-lift" onclick="editLeader(${leader.id})" title="Editar"><i class="fa-solid fa-edit"></i></button>
+                    <button class="action-btn text-red-500 hover:bg-red-50 hover-lift" onclick="deleteLeader(${leader.id})" title="Revogar Acesso"><i class="fa-solid fa-user-xmark"></i></button>
+                </div>
             </td>
         </tr>
     `).join('');
 }
 
-//Função para deletar arquivo
+// Função para deletar arquivo
 window.deleteFile = async function (id) {
     if (confirm('Tem certeza que deseja apagar este arquivo?')) {
         try {
@@ -145,7 +147,54 @@ window.deleteFile = async function (id) {
     }
 };
 
-//Função para deletar lider
+// Expõe downloadMaterial globalmente para os botões gerados dinamicamente via innerHTML
+window.downloadMaterial = async function (id, filename) {
+    try {
+        await downloadMaterial(id, filename);
+        window.showToast(`Download de "${filename}" iniciado!`, 'success');
+    } catch (error) {
+        console.error("Erro ao baixar material:", error);
+        window.showToast('Erro ao baixar o arquivo.', 'error');
+    }
+};
+
+// Abre o modal de edição de material preenchido com dados atuais
+window.editFile = function (id) {
+    const material = adminSlides.find(m => m.id == id); // == para evitar mismatch de tipo
+    if (!material) {
+        console.warn('Material não encontrado para id:', id, '| adminSlides:', adminSlides);
+        window.showToast('Não foi possível carregar os dados. Tente recarregar a página.', 'error');
+        return;
+    }
+
+    document.getElementById('editFileId').value = material.id;
+    document.getElementById('editFileTitle').value = material.titulo_material;
+    document.getElementById('editFileAuthor').value = material.autor_material;
+    document.getElementById('editFileCategory').value = material.categoria_material;
+    document.getElementById('editFileUpload').value = '';
+
+    document.getElementById('editFileModal').classList.remove('hidden');
+};
+
+// Abre o modal de edição de líder preenchido com dados atuais
+window.editLeader = function (id) {
+    const leader = adminLeaders.find(l => l.id == id); // == para evitar mismatch de tipo
+    if (!leader) {
+        console.warn('Líder não encontrado para id:', id, '| adminLeaders:', adminLeaders);
+        window.showToast('Não foi possível carregar os dados. Tente recarregar a página.', 'error');
+        return;
+    }
+
+    document.getElementById('editLeaderId').value = leader.id;
+    document.getElementById('editLeaderName').value = leader.nome;
+    document.getElementById('editLeaderRole').value = leader.cargo;
+    document.getElementById('editLeaderEmail').value = leader.email;
+    document.getElementById('editLeaderPassword').value = '';
+
+    document.getElementById('editLeaderModal').classList.remove('hidden');
+};
+
+// Função para deletar líder
 window.deleteLeader = async function (id) {
     if (confirm('Tem certeza que deseja revogar o acesso a este líder?')) {
         try {
@@ -160,7 +209,7 @@ window.deleteLeader = async function (id) {
     }
 };
 
-//Função para buscar e filtrar arquivos
+// Função para buscar e filtrar arquivos
 function setupAcervoSearchAndFilter() {
     const searchInput = document.getElementById('adminSearchInput');
     const categorySelect = document.getElementById('adminCategoryFilter');
@@ -191,8 +240,8 @@ function setupMobileSidebar() {
     overlay.addEventListener('click', closeSidebar);
 }
 
-
 function setupModals() {
+    // --- Modal de Criação de Material ---
     const uploadForm = document.getElementById('uploadForm');
     const submitUploadBtn = document.getElementById('submitUploadBtn');
 
@@ -235,6 +284,46 @@ function setupModals() {
         }
     });
 
+    // --- Modal de Edição de Material ---
+    const editFileForm = document.getElementById('editFileForm');
+    const submitEditFileBtn = document.getElementById('submitEditFileBtn');
+
+    editFileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const originalText = submitEditFileBtn.innerHTML;
+        submitEditFileBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+        submitEditFileBtn.disabled = true;
+
+        try {
+            const id = parseInt(document.getElementById('editFileId').value);
+            const formData = new FormData();
+            formData.append('titulo_material', document.getElementById('editFileTitle').value);
+            formData.append('categoria_material', document.getElementById('editFileCategory').value);
+            formData.append('autor_material', document.getElementById('editFileAuthor').value);
+            const fileInput = document.getElementById('editFileUpload');
+            if (fileInput && fileInput.files[0]) {
+                formData.append('material', fileInput.files[0]);
+            }
+
+            await updateMaterial(id, formData);
+
+            adminSlides = await getAllMateriais();
+            renderAcervoTable(adminSlides);
+            renderDashboardTable();
+            document.getElementById('totalFilesCount').innerText = adminSlides.length;
+
+            showToast('Material atualizado com sucesso!', 'success');
+            document.getElementById('editFileModal').classList.add('hidden');
+        } catch (error) {
+            console.error('Erro ao editar material:', error);
+            showToast('Erro ao atualizar material.', 'error');
+        } finally {
+            submitEditFileBtn.innerHTML = originalText;
+            submitEditFileBtn.disabled = false;
+        }
+    });
+
+    // --- Modal de Criação de Líder ---
     const addLeaderForm = document.getElementById('addLeaderForm');
     const submitLeaderBtn = document.getElementById('submitLeaderBtn');
 
@@ -264,6 +353,41 @@ function setupModals() {
         } finally {
             submitLeaderBtn.innerHTML = originalText;
             submitLeaderBtn.disabled = false;
+        }
+    });
+
+    // --- Modal de Edição de Líder ---
+    const editLeaderForm = document.getElementById('editLeaderForm');
+    const submitEditLeaderBtn = document.getElementById('submitEditLeaderBtn');
+
+    editLeaderForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const originalText = submitEditLeaderBtn.innerHTML;
+        submitEditLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+        submitEditLeaderBtn.disabled = true;
+
+        try {
+            const id = parseInt(document.getElementById('editLeaderId').value);
+            const nome = document.getElementById('editLeaderName').value;
+            const cargo = document.getElementById('editLeaderRole').value;
+            const email = document.getElementById('editLeaderEmail').value;
+            const senha = document.getElementById('editLeaderPassword').value;
+
+            const payload = { nome, cargo, email };
+            if (senha) payload.senha = senha; // senha é opcional na edição
+
+            await updateLider(id, payload);
+
+            await renderLiderancaTable();
+
+            showToast(`Líder "${nome}" atualizado!`, 'success');
+            document.getElementById('editLeaderModal').classList.add('hidden');
+        } catch (error) {
+            console.error('Erro ao editar líder:', error);
+            showToast('Erro ao atualizar líder.', 'error');
+        } finally {
+            submitEditLeaderBtn.innerHTML = originalText;
+            submitEditLeaderBtn.disabled = false;
         }
     });
 }

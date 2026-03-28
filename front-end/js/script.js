@@ -1,27 +1,43 @@
-const mockSlides = [
-    { id: 1, title: 'O Poder da Esperança', date: '08 Mar 2026', category: 'Sermão', author: 'Pr. Marcos Silva', size: '2.4 MB', type: 'PDF', icon: 'fa-book-open', isNew: true, url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-    { id: 2, title: 'Louvores - Domingo Manhã', date: '08 Mar 2026', category: 'Música', author: 'Min. Louvor', size: '5.1 MB', type: 'PPTX', icon: 'fa-music', isNew: true, url: '#' },
-    { id: 3, title: 'Informativo Semanal', date: '08 Mar 2026', category: 'Avisos', author: 'Secretaria', size: '1.2 MB', type: 'PDF', icon: 'fa-bell', isNew: false, url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-    { id: 4, title: 'Estudo: O Livro de João', date: '04 Mar 2026', category: 'Estudo', author: 'Pra. Ana Costa', size: '3.8 MB', type: 'PPTX', icon: 'fa-pen-nib', isNew: false, url: '#' },
-    { id: 5, title: 'Acampamento Jovem 2026', date: '01 Mar 2026', category: 'Eventos', author: 'Rede Jovem', size: '8.5 MB', type: 'PPTX', icon: 'fa-fire', isNew: false, url: '#' },
-    { id: 6, title: 'Culto de Missões Globais', date: '28 Fev 2026', category: 'Sermão', author: 'Pr. Convidado', size: '4.1 MB', type: 'PPTX', icon: 'fa-earth-americas', isNew: false, url: '#' },
-    { id: 7, title: 'Cifras Inéditas - Coral', date: '25 Fev 2026', category: 'Música', author: 'Maestro João', size: '1.5 MB', type: 'PDF', icon: 'fa-guitar', isNew: false, url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-    { id: 8, title: 'EBD: Heróis da Fé', date: '22 Fev 2026', category: 'Estudo', author: 'Dep. Infantil', size: '12 MB', type: 'PPTX', icon: 'fa-child-reaching', isNew: false, url: '#' }
-];
+import { getAllMateriais } from "../api/material.index.js";
+import { getAllLideres, loginLider } from "../api/lideres.index.js";
 
-const categories = [
-    { name: 'Todos', icon: 'fa-layer-group' },
-    { name: 'Sermão', icon: 'fa-book-open' },
-    { name: 'Música', icon: 'fa-music' },
-    { name: 'Estudo', icon: 'fa-pen-nib' },
-    { name: 'Avisos', icon: 'fa-bell' },
-    { name: 'Eventos', icon: 'fa-calendar-day' }
-];
-
+let slides = [];
+let lideres = [];
 let currentCategory = 'Todos';
 let currentSearch = '';
 
-window.showToast = function (message, type = 'success') {
+const categories = [
+    { name: 'Todos', icon: 'fa-border-all' },
+    { name: 'Cultos', icon: 'fa-microphone' },
+    { name: 'Estudos', icon: 'fa-book-open' },
+    { name: 'Louvores', icon: 'fa-music' },
+    { name: 'Outros', icon: 'fa-folder' },
+];
+
+async function loadMateriais() {
+    try {
+        const data = await getAllMateriais();
+        slides = data;
+        return data;
+    } catch (error) {
+        console.error("Erro ao carregar materiais:", error);
+        return [];
+    }
+}
+
+async function loadLideres() {
+    try {
+        const data = await getAllLideres();
+        lideres = data;
+        return data;
+    } catch (error) {
+        console.error("Erro ao carregar lideres:", error);
+        return [];
+    }
+}
+
+
+window.showToast = async function (message, type = 'success') {
     let container = document.getElementById('toast-container');
     if (!container) {
         container = document.createElement('div');
@@ -39,8 +55,10 @@ window.showToast = function (message, type = 'success') {
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
 };
 
-function init() {
+async function init() {
     createParticles();
+    slides = await loadMateriais();
+    lideres = await loadLideres();
     setupScrollEffects();
     setupNavigation();
     setupLoginModal();
@@ -50,6 +68,7 @@ function init() {
     setupSearch();
 }
 
+//Função para criar particulas
 function createParticles() {
     const container = document.getElementById('particles');
     for (let i = 0; i < 20; i++) {
@@ -69,6 +88,7 @@ function createParticles() {
     }
 }
 
+//Função para configurar efeitos de scroll
 function setupScrollEffects() {
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
@@ -85,7 +105,8 @@ function setupScrollEffects() {
     document.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
 }
 
-function setupNavigation() {
+//Função para configurar navegação
+async function setupNavigation() {
     const sections = document.querySelectorAll('section, main');
     const navLinks = document.querySelectorAll('.nav-link');
 
@@ -103,7 +124,8 @@ function setupNavigation() {
     });
 }
 
-function setupLoginModal() {
+//Função para configurar modal de login
+async function setupLoginModal() {
     const modal = document.getElementById('loginModal');
     const openBtn = document.getElementById('openLoginBtn');
     const closeBtn = document.getElementById('closeModalBtn');
@@ -113,20 +135,44 @@ function setupLoginModal() {
     closeBtn.addEventListener('click', () => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; });
     modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; } });
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const emailInput = document.getElementById('email').value.trim();
+        const passwordInput = document.getElementById('password').value.trim();
+
+        if (!emailInput || !passwordInput) {
+            showToast('Preencha o email e a senha.', 'error');
+            return;
+        }
+
         const btn = loginForm.querySelector('.btn-submit');
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A autenticar...';
         btn.disabled = true;
 
-        setTimeout(() => {
-            showToast('Login efetuado com sucesso!', 'success');
-            setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 800);
-        }, 1200);
+        try {
+            // Deixa o backend comparar com bcrypt.compare (senha está hashada no banco)
+            const resultado = await loginLider(emailInput, passwordInput);
+
+            if (resultado.success) {
+                showToast('Login efetuado com sucesso!', 'success');
+                setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 800);
+            } else {
+                showToast(resultado.message || 'Email ou senha incorretos.', 'error');
+                btn.innerHTML = 'Entrar no Painel';
+                btn.disabled = false;
+            }
+        } catch (error) {
+            const msg = error?.response?.data?.message || 'Email ou senha incorretos.';
+            showToast(msg, 'error');
+            btn.innerHTML = 'Entrar no Painel';
+            btn.disabled = false;
+        }
     });
 }
 
-function setupViewerModal() {
+//Função para configurar modal de visualização
+async function setupViewerModal() {
     const viewerModal = document.getElementById('viewerModal');
     const closeViewerBtn = document.getElementById('closeViewerBtn');
     const iframe = document.getElementById('fileIframe');
@@ -135,22 +181,27 @@ function setupViewerModal() {
     closeViewerBtn.addEventListener('click', closeViewer);
     viewerModal.addEventListener('click', (e) => { if (e.target === viewerModal) closeViewer(); });
 
+    //Função para fechar modal de visualização
     function closeViewer() {
         viewerModal.classList.add('hidden');
         document.body.style.overflow = 'auto';
         setTimeout(() => { iframe.src = ''; }, 300);
     }
 
-    window.openViewer = (id) => {
-        const file = mockSlides.find(s => s.id === id);
+    window.openViewer = async (id) => {
+        const file = slides.find(s => s.id === id);
         if (!file) return;
 
-        document.getElementById('viewerTitle').textContent = file.title;
-        if (file.type === 'PDF') {
-            iframe.classList.remove('hidden'); fallback.classList.add('hidden'); iframe.src = file.url;
+        document.getElementById('viewerTitle').textContent = file.titulo_material;
+
+        const fileUrl = file.link_material || file.url || '';
+        const fileType = (file.tipo_material || file.type || '').toUpperCase();
+
+        if (fileType === 'PDF') {
+            iframe.classList.remove('hidden'); fallback.classList.add('hidden'); iframe.src = fileUrl;
         } else {
             iframe.classList.add('hidden'); fallback.classList.remove('hidden');
-            document.getElementById('fallbackDownloadBtn').onclick = () => window.open(file.url, '_blank');
+            document.getElementById('fallbackDownloadBtn').onclick = () => window.open(fileUrl, '_blank');
         }
 
         viewerModal.classList.remove('hidden');
@@ -158,7 +209,8 @@ function setupViewerModal() {
     };
 }
 
-function renderFilters() {
+//Função para renderizar filtros
+async function renderFilters() {
     const container = document.getElementById('categoryFilters');
     container.innerHTML = categories.map(cat => {
         const isActive = currentCategory === cat.name;
@@ -170,7 +222,8 @@ function renderFilters() {
     }).join('');
 }
 
-function setupSearch() {
+//Função para configurar busca
+async function setupSearch() {
     const input = document.getElementById('searchInput');
     input.addEventListener('input', (e) => { currentSearch = e.target.value.toLowerCase(); renderSlides(); });
 }
@@ -178,20 +231,25 @@ function setupSearch() {
 window.setCategory = (category) => { currentCategory = category; renderFilters(); renderSlides(); };
 window.resetFilters = () => { currentCategory = 'Todos'; document.getElementById('searchInput').value = ''; currentSearch = ''; renderFilters(); renderSlides(); };
 
+//Função para obter cor do arquivo
 function getFileColorClass(type) {
-    if (type === 'PDF') return 'file-pdf';
-    if (type === 'PPTX') return 'file-pptx';
+    const t = (type || '').toUpperCase();
+    if (t === 'PDF') return 'file-pdf';
+    if (t === 'PPTX') return 'file-pptx';
     return 'file-default';
 }
 
-function renderSlides() {
+//Função para renderizar slides
+async function renderSlides() {
     const grid = document.getElementById('slidesGrid');
     const status = document.getElementById('statusMessage');
     const empty = document.getElementById('emptyState');
 
-    const filtered = mockSlides.filter(slide => {
-        const matchCat = currentCategory === 'Todos' || slide.category === currentCategory;
-        const matchSearch = slide.title.toLowerCase().includes(currentSearch) || slide.author.toLowerCase().includes(currentSearch);
+    const filtered = slides.filter(slide => {
+        const matchCat = currentCategory === 'Todos' || slide.categoria_material === currentCategory;
+        const titulo = (slide.titulo_material || '').toLowerCase();
+        const autor = (slide.autor_material || '').toLowerCase();
+        const matchSearch = titulo.includes(currentSearch) || autor.includes(currentSearch);
         return matchCat && matchSearch;
     });
 
@@ -201,32 +259,34 @@ function renderSlides() {
         grid.innerHTML = ''; empty.classList.remove('hidden');
     } else {
         empty.classList.add('hidden');
-        grid.innerHTML = filtered.map((slide, index) => `
+
+        grid.innerHTML = filtered.map((slide, index) => {
+            const tipo = (slide.tipo_material || slide.type || 'Ficheiro').toUpperCase();
+            const data = slide.created_at ? new Date(slide.created_at).toLocaleDateString('pt-PT') : '—';
+            return `
             <div class="premium-card reveal" style="transition-delay: ${index * 60}ms">
                 <div class="card-body">
                     <div class="card-header">
                         <div class="card-badges">
-                            <span class="badge-category"><i class="fa-solid ${slide.icon}"></i> ${slide.category}</span>
-                            ${slide.isNew ? '<span class="badge-new">Novo</span>' : ''}
+                            <span class="badge-category"><i class="fa-solid fa-folder"></i> ${slide.categoria_material || 'Geral'}</span>
                         </div>
                         <div class="card-meta">
-                            <span class="file-type ${getFileColorClass(slide.type)}">${slide.type}</span>
-                            <span class="file-size">${slide.size}</span>
+                            <span class="file-type ${getFileColorClass(tipo)}">${tipo}</span>
                         </div>
                     </div>
-                    <h3 class="card-title" title="${slide.title}">${slide.title}</h3>
-                    <div class="card-author"><span class="author-icon"><i class="fa-solid fa-user"></i></span>${slide.author}</div>
+                    <h3 class="card-title" title="${slide.titulo_material}">${slide.titulo_material}</h3>
+                    <div class="card-author"><span class="author-icon"><i class="fa-solid fa-user"></i></span>${slide.autor_material || 'Desconhecido'}</div>
                     <hr class="card-divider">
                     <div class="card-footer">
-                        <div class="card-date"><i class="fa-regular fa-calendar"></i> ${slide.date}</div>
+                        <div class="card-date"><i class="fa-regular fa-calendar"></i> ${data}</div>
                         <div class="card-actions">
                             <button onclick="openViewer(${slide.id})" class="btn-action btn-view hover-lift"><i class="fa-regular fa-eye"></i></button>
-                            <a href="${slide.url}" target="_blank" class="btn-action btn-download btn-ripple hover-lift"><i class="fa-solid fa-download"></i></a>
+                            <a href="${slide.link_material || '#'}" target="_blank" class="btn-action btn-download btn-ripple hover-lift"><i class="fa-solid fa-download"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
 
         document.querySelectorAll('#slidesGrid .reveal').forEach(el => {
             setTimeout(() => window.revealObserver.observe(el), 10);
@@ -234,4 +294,5 @@ function renderSlides() {
     }
 }
 
-init();
+
+await init();

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
     <title>MEJ - Plataforma</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,6 +13,10 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="/front-end/styles/styles.css">
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="/front-end/js/script.js"></script>
 </head>
 
 <body class="bg-pattern antialiased">
@@ -21,18 +26,17 @@
             <div class="nav-content">
                 <div class="logo-group" onclick="window.scrollTo(0,0)">
                     <div class="logo-icon-wrapper group">
-                        <div class="logo-spinner animate-spin-slow"></div>
-                        <i class="fa-solid fa-cross logo-icon"></i>
+                        <img src="/front-end/assets/logo.png" class="logo-icon">
                     </div>
                     <div class="logo-text">
                         <span class="logo-title">Missão Evangélica Jaboque</span>
-                        <span class="logo-subtitle">Acervo Online</span>
+                        <span class="logo-subtitle">OficialMEJ</span>
                     </div>
                 </div>
 
                 <nav class="nav-desktop">
                     <a href="#inicio" class="nav-link active">Início</a>
-                    <a href="#acervo" class="nav-link">Ficheiros</a>
+                    <a href="#acervo" class="nav-link">Materiais</a>
                     <a href="#sobre" class="nav-link">Sobre</a>
                 </nav>
 
@@ -78,7 +82,7 @@
 
     <main id="acervo" class="container main-content relative">
         <div class="section-header reveal">
-            <h2 class="section-title">Explore o Acervo</h2>
+            <h2 class="section-title">Explore os materiais.</h2>
             <div class="title-divider"></div>
         </div>
 
@@ -112,7 +116,7 @@
 
     <section id="sobre" class="container main-content relative">
         <div class="section-header reveal">
-            <h2 class="section-title">Sobre o Projeto</h2>
+            <h2 class="section-title">Sobre a Plataforma</h2>
             <div class="title-divider"></div>
         </div>
 
@@ -120,8 +124,10 @@
             <div class="about-card hover-lift">
                 <div class="about-icon"><i class="fa-solid fa-hands-holding-circle"></i></div>
                 <h3>O Nosso Propósito</h3>
-                <p>Este portal nasceu para democratizar o acesso aos materiais da Igreja Viva. Queremos que cada membro
-                    tenha autoacesso facilitado aos PowerPoints, sermões e estudos, em qualquer lugar e a qualquer hora.
+                <p>Este portal nasceu para democratizar o acesso aos materiais da Missão Evangélica Jaboque. Queremos
+                    que cada membro
+                    tenha autoacesso facilitado aos PowerPoints, estudos e outros materiais, em qualquer lugar e a
+                    qualquer hora.
                 </p>
             </div>
             <div class="about-card hover-lift">
@@ -134,8 +140,9 @@
     </section>
 
     <footer class="footer">
-        <p>© 2026 Comunidade Igreja Viva. Todos os direitos reservados.</p>
-        <p class="footer-credit">Desenvolvido com <i class="fa-solid fa-heart pop-heart"></i> pelo projeto de extensão.
+        <p>© 2026 Missão Evangélica Jaboque. Todos os direitos reservados.</p>
+        <p class="footer-credit">Desenvolvido com <i class="fa-solid fa-heart pop-heart"></i> pelo projeto de extensão
+            de TI.
         </p>
     </footer>
 
@@ -145,16 +152,16 @@
             <div class="modal-header">
                 <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
                 <h3>Área da Liderança</h3>
-                <p>Acesso restrito para gestão do acervo.</p>
+                <p>Acesso restrito para a gestão da plataforma.</p>
             </div>
             <form class="login-form" id="loginForm">
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" placeholder="lideranca@igrejaviva.com" required>
+                    <input type="email" id="email" placeholder="lideranca@oficialmej.com" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Palavra-passe</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <input type="password" id="password" placeholder="••••••••">
                 </div>
                 <button type="submit" class="btn-submit btn-ripple">Entrar no Painel</button>
             </form>
@@ -181,7 +188,6 @@
         </div>
     </div>
 
-    <script src="/front-end/js/script.js"></script>
 </body>
 
 </html>

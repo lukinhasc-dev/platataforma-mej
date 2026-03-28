@@ -5,6 +5,11 @@ export const getAllLideres = async () => {
     return response.data
 }
 
+export const loginLider = async (email, senha) => {
+    const response = await api.post("/lideres/login", { email, senha })
+    return response.data
+}
+
 export const createLider = async (lider) => {
     const response = await api.post("/lideres", lider)
     return response.data

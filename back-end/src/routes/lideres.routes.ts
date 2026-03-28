@@ -6,6 +6,7 @@ const controllerLideres = new LideresController()
 
 router.get('/', controllerLideres.getAllLideres)
 router.post('/', controllerLideres.createLider)
+router.post('/login', controllerLideres.loginLider)
 router.put('/:id', controllerLideres.updateLider)
 router.delete('/:id', controllerLideres.removeLider)
 
