@@ -36,7 +36,6 @@ async function loadLideres() {
     }
 }
 
-
 window.showToast = async function (message, type = 'success') {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -68,7 +67,6 @@ async function init() {
     setupSearch();
 }
 
-//Função para criar particulas
 function createParticles() {
     const container = document.getElementById('particles');
     for (let i = 0; i < 20; i++) {
@@ -88,7 +86,6 @@ function createParticles() {
     }
 }
 
-//Função para configurar efeitos de scroll
 function setupScrollEffects() {
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
@@ -105,7 +102,6 @@ function setupScrollEffects() {
     document.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
 }
 
-//Função para configurar navegação
 async function setupNavigation() {
     const sections = document.querySelectorAll('section, main');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -124,7 +120,6 @@ async function setupNavigation() {
     });
 }
 
-//Função para configurar modal de login
 async function setupLoginModal() {
     const modal = document.getElementById('loginModal');
     const openBtn = document.getElementById('openLoginBtn');
@@ -151,7 +146,6 @@ async function setupLoginModal() {
         btn.disabled = true;
 
         try {
-            // Deixa o backend comparar com bcrypt.compare (senha está hashada no banco)
             const resultado = await loginLider(emailInput, passwordInput);
 
             if (resultado.success) {
@@ -171,7 +165,6 @@ async function setupLoginModal() {
     });
 }
 
-//Função para configurar modal de visualização
 async function setupViewerModal() {
     const viewerModal = document.getElementById('viewerModal');
     const closeViewerBtn = document.getElementById('closeViewerBtn');
@@ -181,7 +174,6 @@ async function setupViewerModal() {
     closeViewerBtn.addEventListener('click', closeViewer);
     viewerModal.addEventListener('click', (e) => { if (e.target === viewerModal) closeViewer(); });
 
-    //Função para fechar modal de visualização
     function closeViewer() {
         viewerModal.classList.add('hidden');
         document.body.style.overflow = 'auto';
@@ -209,7 +201,6 @@ async function setupViewerModal() {
     };
 }
 
-//Função para renderizar filtros
 async function renderFilters() {
     const container = document.getElementById('categoryFilters');
     container.innerHTML = categories.map(cat => {
@@ -222,7 +213,6 @@ async function renderFilters() {
     }).join('');
 }
 
-//Função para configurar busca
 async function setupSearch() {
     const input = document.getElementById('searchInput');
     input.addEventListener('input', (e) => { currentSearch = e.target.value.toLowerCase(); renderSlides(); });
@@ -231,7 +221,6 @@ async function setupSearch() {
 window.setCategory = (category) => { currentCategory = category; renderFilters(); renderSlides(); };
 window.resetFilters = () => { currentCategory = 'Todos'; document.getElementById('searchInput').value = ''; currentSearch = ''; renderFilters(); renderSlides(); };
 
-//Função para obter cor do arquivo
 function getFileColorClass(type) {
     const t = (type || '').toUpperCase();
     if (t === 'PDF') return 'file-pdf';
@@ -239,7 +228,6 @@ function getFileColorClass(type) {
     return 'file-default';
 }
 
-//Função para renderizar slides
 async function renderSlides() {
     const grid = document.getElementById('slidesGrid');
     const status = document.getElementById('statusMessage');
@@ -286,13 +274,13 @@ async function renderSlides() {
                     </div>
                 </div>
             </div>
-        `}).join('');
+        `;
+        }).join('');
 
         document.querySelectorAll('#slidesGrid .reveal').forEach(el => {
             setTimeout(() => window.revealObserver.observe(el), 10);
         });
     }
 }
-
 
 await init();

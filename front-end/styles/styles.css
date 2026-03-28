@@ -1,26 +1,23 @@
 :root {
-    /* Fontes */
+
     --font-sans: 'Poppins', sans-serif;
     --font-serif: 'Poppins', serif;
 
-    /* Cores Principais (Brand) */
     --color-dark: #112838;
-    /* Primária */
+
     --color-blue: #1F3449;
-    /* Secundária */
+
     --color-accent: #24394A;
-    /* Terceira */
+
     --color-accent-light: #2c4a61;
     --color-accent-dark: #1a2c3a;
     --color-surface: #ffffff;
     --color-bg: #f4f7f9;
 
-    /* Alias de compatibilidade (mapeados para o sistema de cores atual) */
     --color-gold: var(--color-accent);
     --color-gold-light: var(--color-surface);
     --color-slate-800: var(--color-dark);
 
-    /* Tons de Cinza (Harmonizados com o Azul) */
     --color-gray-50: #f8fafc;
     --color-gray-100: #f1f5f9;
     --color-gray-200: #e2e8f0;
@@ -30,20 +27,17 @@
     --color-gray-700: #334155;
     --color-gray-800: #1e293b;
 
-    /* Feedback */
     --color-success: #10b981;
     --color-error: #ef4444;
     --color-error-light: #f87171;
     --color-warning: #f59e0b;
     --color-info: #3b82f6;
 
-    /* Backgrounds leves de feedback */
     --bg-error-light: #fff1f2;
     --bg-warning-light: #fffbeb;
     --bg-info-light: #eff6ff;
     --bg-success-light: #f0fdf4;
 
-    /* Efeitos Alpha (Baseados no Brand Dark #112838) */
     --color-accent-alpha-10: #1128381a;
     --color-accent-alpha-25: #11283840;
     --color-accent-alpha-30: #1128384d;
@@ -62,7 +56,6 @@
     --color-dark-alpha-70: #112838b3;
     --color-dark-alpha-85: #112838d9;
 
-    /* Outros */
     --color-scrollbar-track: #f1f5f9;
     --color-scrollbar-thumb: #cbd5e1;
     --color-pattern-dot: #cbd5e1;
@@ -425,7 +418,6 @@ body {
     cursor: pointer;
 }
 
-
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -495,7 +487,6 @@ body {
     transition: transform 0.4s;
 }
 
-
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -564,7 +555,6 @@ body {
     font-weight: 700;
 }
 
-/* Botão de Liderança */
 .btn-leadership {
     display: none;
     align-items: center;
@@ -621,7 +611,6 @@ body {
     padding-top: 11rem;
     padding-bottom: 9rem;
 }
-
 
 .particles-container {
     position: absolute;
@@ -1028,7 +1017,6 @@ body {
     margin-left: 0.5rem;
 }
 
-/* Estado Vazio */
 .empty-state {
     text-align: center;
     padding: 5rem 2rem;
@@ -1066,7 +1054,6 @@ body {
     line-height: 1.6;
 }
 
-/* Botão Limpar Pesquisa */
 .btn-reset {
     display: inline-flex;
     align-items: center;
@@ -1098,9 +1085,6 @@ body {
     transform: translateY(-1px) scale(1.01);
 }
 
-/* =========================================
-   7. CARTÕES DO ACERVO
-========================================= */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
@@ -1321,7 +1305,6 @@ body {
     box-shadow: 0 6px 15px var(--color-accent-alpha-30);
 }
 
-
 .about-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -1408,7 +1391,6 @@ body {
     visibility: hidden;
 }
 
-/* Caixa do Modal */
 .modal-content {
     background-color: var(--color-surface);
     width: 100%;
@@ -1475,7 +1457,6 @@ body {
     letter-spacing: -0.025em;
 }
 
-/* Formulários */
 .login-form .form-group {
     margin-bottom: 1.25rem;
     text-align: left;
@@ -1532,9 +1513,6 @@ body {
     box-shadow: 0 15px 20px -5px var(--color-accent-alpha-30);
 }
 
-/* =========================================
-   10. TOAST NOTIFICATIONS
-========================================= */
 .toast-container {
     position: fixed;
     bottom: 1.5rem;
@@ -1583,9 +1561,6 @@ body {
     font-size: 1.5rem;
 }
 
-/* =========================================
-   11. PAINEL ADMIN SPA E LAYOUT
-========================================= */
 .admin-body {
     background-color: var(--color-scrollbar-track);
 }
@@ -1596,7 +1571,6 @@ body {
     overflow: hidden;
 }
 
-/* Menu Lateral Admin */
 .admin-sidebar {
     width: 280px;
     background-color: var(--color-dark);
@@ -1654,7 +1628,6 @@ body {
     border-top: 1px solid var(--color-white-alpha-05);
 }
 
-/* Área Principal Admin */
 .admin-main {
     flex-grow: 1;
     padding: 2.5rem;
@@ -1687,7 +1660,6 @@ body {
     align-items: flex-end;
 }
 
-/* Cartões Estatísticos Admin */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1727,7 +1699,6 @@ body {
     color: var(--color-dark);
 }
 
-/* Tabelas Admin */
 .admin-panel {
     background-color: var(--color-surface);
     border-radius: 1.25rem;
@@ -1775,7 +1746,6 @@ body {
     border-bottom: 2px solid var(--color-gray-200);
 }
 
-/* Botões de Ação Admin */
 .action-btn {
     width: 2.25rem;
     height: 2.25rem;
@@ -1789,7 +1759,6 @@ body {
     transition: all 0.2s;
 }
 
-/* Responsividade Admin */
 .admin-header-title {
     display: flex;
     align-items: center;
@@ -1853,9 +1822,6 @@ body {
     }
 }
 
-/* =========================================
-   12. VISUALIZADOR DE DOCUMENTOS (IFRAME)
-========================================= */
 .viewer-content {
     width: 95%;
     max-width: 1100px;
@@ -1914,11 +1880,6 @@ body {
     color: var(--color-gray-500);
 }
 
-/* =========================================
-   13. CLASSES UTILITÁRIAS ADICIONAIS
-========================================= */
-
-/* Tipografia extra */
 .text-3xl {
     font-size: 2rem;
 }
@@ -1951,7 +1912,6 @@ body {
     line-height: 1.625;
 }
 
-/* Espaçamento extra */
 .mt-2 {
     margin-top: 0.5rem;
 }
@@ -1999,7 +1959,6 @@ body {
     padding: 1.5rem;
 }
 
-/* Layout flex extra */
 .flex-col {
     flex-direction: column;
 }
@@ -2044,7 +2003,6 @@ body {
     gap: 1.5rem;
 }
 
-/* Dimensões */
 .w-full {
     width: 100%;
 }
@@ -2081,7 +2039,6 @@ body {
     max-width: 56rem;
 }
 
-/* Bordas */
 .rounded {
     border-radius: 0.375rem;
 }
@@ -2110,7 +2067,6 @@ body {
     border: 0;
 }
 
-/* Sombras */
 .shadow-sm {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
@@ -2127,7 +2083,6 @@ body {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
 }
 
-/* Visibilidade */
 .invisible {
     visibility: hidden;
 }
@@ -2144,7 +2099,6 @@ body {
     opacity: 1;
 }
 
-/* Overflow */
 .overflow-hidden {
     overflow: hidden;
 }
@@ -2157,7 +2111,6 @@ body {
     overflow-x: auto;
 }
 
-/* Posição */
 .absolute {
     position: absolute;
 }
@@ -2190,7 +2143,6 @@ body {
     z-index: 50;
 }
 
-/* Cursor */
 .cursor-pointer {
     cursor: pointer;
 }
@@ -2199,7 +2151,6 @@ body {
     cursor: not-allowed;
 }
 
-/* Transição genérica */
 .transition {
     transition: all 0.3s ease;
 }
@@ -2212,7 +2163,6 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* Cores de fundo extra */
 .bg-white {
     background-color: var(--color-surface);
 }
@@ -2229,7 +2179,6 @@ body {
     background-color: var(--color-accent);
 }
 
-/* Cores de texto extra */
 .text-white {
     color: var(--color-surface);
 }
@@ -2242,7 +2191,6 @@ body {
     color: var(--color-gray-400);
 }
 
-/* Grade extra */
 .grid {
     display: grid;
 }
@@ -2277,7 +2225,6 @@ body {
     }
 }
 
-/* Botão genérico */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -2326,14 +2273,12 @@ body {
     color: var(--color-dark);
 }
 
-/* Divider */
 .divider {
     border: 0;
     border-top: 1px solid var(--color-gray-200);
     margin: 1.5rem 0;
 }
 
-/* Badge genérica */
 .badge {
     display: inline-flex;
     align-items: center;

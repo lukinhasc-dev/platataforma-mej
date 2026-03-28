@@ -1,7 +1,6 @@
 import { getAllLideres, createLider, deleteLider, updateLider } from "../api/lideres.index.js"
 import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downloadMaterial } from "../api/material.index.js"
 
-// Variáveis de estado global (no escopo do módulo)
 let adminSlides = [];
 let adminLeaders = [];
 
@@ -45,7 +44,6 @@ async function initAdmin() {
 
 window.initAdmin = initAdmin;
 
-// Função para trocar de view
 window.switchView = function (viewId, element) {
     document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
     element.classList.add('active');
@@ -69,7 +67,6 @@ window.switchView = function (viewId, element) {
     }
 };
 
-// Função para renderizar a tabela do dashboard
 async function renderDashboardTable() {
     const tbody = document.getElementById('dashboardTableBody');
     const recentSlides = adminSlides.slice(0, 3);
@@ -82,7 +79,6 @@ async function renderDashboardTable() {
     `).join('');
 }
 
-// Função para renderizar a tabela do acervo
 async function renderAcervoTable(dataToRender) {
     const tbody = document.getElementById('acervoTableBody');
     if (!dataToRender || dataToRender.length === 0) {
@@ -106,7 +102,6 @@ async function renderAcervoTable(dataToRender) {
     `).join('');
 }
 
-// Função para renderizar a tabela de líderes
 async function renderLiderancaTable() {
     const tbody = document.getElementById('liderancaTableBody');
     tbody.innerHTML = adminLeaders.map((leader, index) => `
@@ -127,7 +122,6 @@ async function renderLiderancaTable() {
     `).join('');
 }
 
-// Função para deletar arquivo
 window.deleteFile = async function (id) {
     if (confirm('Tem certeza que deseja apagar este arquivo?')) {
         try {
@@ -143,7 +137,6 @@ window.deleteFile = async function (id) {
     }
 };
 
-// Expõe downloadMaterial globalmente para os botões gerados dinamicamente via innerHTML
 window.downloadMaterial = async function (id, filename) {
     try {
         await downloadMaterial(id, filename);
@@ -154,9 +147,8 @@ window.downloadMaterial = async function (id, filename) {
     }
 };
 
-// Abre o modal de edição de material preenchido com dados atuais
 window.editFile = function (id) {
-    const material = adminSlides.find(m => m.id == id); // == para evitar mismatch de tipo
+    const material = adminSlides.find(m => m.id == id);
     if (!material) {
         console.warn('Material não encontrado para id:', id, '| adminSlides:', adminSlides);
         window.showToast('Não foi possível carregar os dados. Tente recarregar a página.', 'error');
@@ -172,9 +164,8 @@ window.editFile = function (id) {
     document.getElementById('editFileModal').classList.remove('hidden');
 };
 
-// Abre o modal de edição de líder preenchido com dados atuais
 window.editLeader = function (id) {
-    const leader = adminLeaders.find(l => l.id == id); // == para evitar mismatch de tipo
+    const leader = adminLeaders.find(l => l.id == id);
     if (!leader) {
         console.warn('Líder não encontrado para id:', id, '| adminLeaders:', adminLeaders);
         window.showToast('Não foi possível carregar os dados. Tente recarregar a página.', 'error');
@@ -190,7 +181,6 @@ window.editLeader = function (id) {
     document.getElementById('editLeaderModal').classList.remove('hidden');
 };
 
-// Função para deletar líder
 window.deleteLeader = async function (id) {
     if (confirm('Tem certeza que deseja revogar o acesso a este líder?')) {
         try {
@@ -205,7 +195,6 @@ window.deleteLeader = async function (id) {
     }
 };
 
-// Função para buscar e filtrar arquivos
 async function setupAcervoSearchAndFilter() {
     const searchInput = document.getElementById('adminSearchInput');
     const categorySelect = document.getElementById('adminCategoryFilter');
@@ -246,7 +235,6 @@ async function setupMobileSidebar() {
 }
 
 async function setupModals() {
-    // --- Modal de Criação de Material ---
     const uploadForm = document.getElementById('uploadForm');
     const submitUploadBtn = document.getElementById('submitUploadBtn');
 
@@ -289,7 +277,6 @@ async function setupModals() {
         }
     });
 
-    // --- Modal de Edição de Material ---
     const editFileForm = document.getElementById('editFileForm');
     const submitEditFileBtn = document.getElementById('submitEditFileBtn');
 
@@ -328,7 +315,6 @@ async function setupModals() {
         }
     });
 
-    // --- Modal de Criação de Líder ---
     const addLeaderForm = document.getElementById('addLeaderForm');
     const submitLeaderBtn = document.getElementById('submitLeaderBtn');
 
@@ -361,7 +347,6 @@ async function setupModals() {
         }
     });
 
-    // --- Modal de Edição de Líder ---
     const editLeaderForm = document.getElementById('editLeaderForm');
     const submitEditLeaderBtn = document.getElementById('submitEditLeaderBtn');
 
@@ -379,7 +364,7 @@ async function setupModals() {
             const senha = document.getElementById('editLeaderPassword').value;
 
             const payload = { nome, cargo, email };
-            if (senha) payload.senha = senha; // senha é opcional na edição
+            if (senha) payload.senha = senha;
 
             await updateLider(id, payload);
 
@@ -397,5 +382,4 @@ async function setupModals() {
     });
 }
 
-// Inicialização
 document.addEventListener('DOMContentLoaded', initAdmin);
