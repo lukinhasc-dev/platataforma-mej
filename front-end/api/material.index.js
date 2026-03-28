@@ -13,7 +13,9 @@ export const createMaterial = async (formData) => {
 }
 
 export const updateMaterial = async (id, material) => {
-    const response = await api.put(`/material/${id}`, material)
+    const response = await api.put(`/material/${id}`, material, {
+        headers: { "Content-Type": "multipart/form-data" }
+    })
     return response.data
 }
 
@@ -25,13 +27,19 @@ export const deleteMaterial = async (id) => {
 export const downloadMaterial = async (id, filename = 'material') => {
     const response = await api.get(`/material/download/${id}`, {
         responseType: 'blob'
-    })
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', filename)
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
+    });
+    
+    // Pegamos o tipo original do arquivo (pdf, ppt, jpeg) vindo do servidor
+    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Se o filename não tiver ponto (extensão), o navegador pode dar problema
+    // mas deixando vazio o navegador costuma usar o Content-Disposition do servidor
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
 }

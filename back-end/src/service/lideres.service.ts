@@ -75,3 +75,28 @@ export const remove = async (id: number) => {
 
     return result.rows[0]
 }
+
+export const login = async (email: string, senha: string) => {
+    if (!email || !senha) {
+        throw new Error("Email e senha são obrigatórios.")
+    }
+
+    const result = await db.query("SELECT * FROM lideres WHERE email = $1", [email])
+
+    if (result.rows.length === 0) {
+        throw new Error("Email ou senha incorretos.")
+    }
+
+    const lider = result.rows[0]
+
+    // Compara a senha digitada com o hash salvo no banco
+    const senhaCorreta = await bcrypt.compare(senha, lider.senha)
+
+    if (!senhaCorreta) {
+        throw new Error("Email ou senha incorretos.")
+    }
+
+    // Retorna os dados do líder sem expor a senha
+    const { senha: _, ...liderSemSenha } = lider
+    return liderSemSenha
+}
