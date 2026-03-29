@@ -1,7 +1,40 @@
 import { Request, Response } from 'express'
 import { getAll, create, update, remove, getById } from '../service/materiais.service'
-import fs from 'fs'
 import path from 'path'
+import supabase from '../config/supabase'
+
+const BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'materiais'
+
+// Faz upload do buffer para o Supabase Storage e retorna a URL pública
+async function uploadToSupabase(file: Express.Multer.File): Promise<string> {
+    const ext = path.extname(file.originalname)
+    const filename = `${Date.now()}${ext}`
+
+    const { error } = await supabase.storage
+        .from(BUCKET)
+        .upload(filename, file.buffer, {
+            contentType: file.mimetype,
+            upsert: false,
+        })
+
+    if (error) throw new Error(`Erro no upload: ${error.message}`)
+
+    // Retorna a URL pública (bucket público)
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(filename)
+    return data.publicUrl
+}
+
+// Remove um arquivo do Supabase Storage pela URL pública
+async function deleteFromSupabase(publicUrl: string): Promise<void> {
+    try {
+        // Extrai o nome do arquivo da URL pública
+        const filename = publicUrl.split('/').pop()
+        if (!filename) return
+        await supabase.storage.from(BUCKET).remove([filename])
+    } catch {
+        // Não bloqueia a operação se falhar ao deletar
+    }
+}
 
 export class MaterialController {
     async getAllMateriais(req: Request, res: Response) {
@@ -17,11 +50,18 @@ export class MaterialController {
 
     async createMaterial(req: Request, res: Response) {
         try {
-            const path = req.file?.path;
+            if (!req.file) {
+                return res.status(400).json({ message: "Arquivo obrigatório." })
+            }
+
+            // Faz upload para o Supabase Storage e obtém a URL pública
+            const publicUrl = await uploadToSupabase(req.file)
+
             const result = await create({
                 ...req.body,
-                link_material: path || req.body.link_material
+                link_material: publicUrl
             })
+
             return res.status(201).json(result)
         } catch (error: any) {
             return res.status(500).json({
@@ -32,20 +72,30 @@ export class MaterialController {
 
     async updateMaterial(req: Request, res: Response) {
         const { id } = req.params
-
         const idNumber = Number(id)
+
         if (isNaN(idNumber)) {
-            return res.status(400).json({
-                message: "ID inválido"
-            })
+            return res.status(400).json({ message: "ID inválido" })
         }
 
         try {
-            const path = req.file?.path;
+            let linkMaterial = req.body.link_material
+
+            // Se um novo arquivo foi enviado, faz upload e usa a nova URL
+            if (req.file) {
+                // Deleta o arquivo antigo do Storage (se existir e for URL do Supabase)
+                const existing = await getById(idNumber)
+                if (existing?.link_material) {
+                    await deleteFromSupabase(existing.link_material)
+                }
+                linkMaterial = await uploadToSupabase(req.file)
+            }
+
             const result = await update(idNumber, {
                 ...req.body,
-                link_material: path || req.body.link_material
+                link_material: linkMaterial
             })
+
             return res.status(200).json(result)
         } catch (error: any) {
             return res.status(500).json({
@@ -56,15 +106,18 @@ export class MaterialController {
 
     async removeMaterial(req: Request, res: Response) {
         const { id } = req.params
-
         const idNumber = Number(id)
+
         if (isNaN(idNumber)) {
-            return res.status(400).json({
-                message: "ID inválido"
-            })
+            return res.status(400).json({ message: "ID inválido" })
         }
 
         try {
+            const existing = await getById(idNumber)
+            if (existing?.link_material) {
+                await deleteFromSupabase(existing.link_material)
+            }
+
             const result = await remove(idNumber)
             return res.status(200).json(result)
         } catch (error: any) {
@@ -76,37 +129,24 @@ export class MaterialController {
 
     async downloadMaterial(req: Request, res: Response) {
         const { id } = req.params
-
         const idNumber = Number(id)
+
         if (isNaN(idNumber)) {
-            return res.status(400).json({
-                message: "ID inválido"
-            })
+            return res.status(400).json({ message: "ID inválido" })
         }
 
         try {
             const material = await getById(idNumber)
-            
-            if (!material.link_material) {
+
+            if (!material?.link_material) {
                 return res.status(404).json({
-                    message: "Este material não possui um arquivo associado"
+                    message: "Este material não possui um arquivo associado."
                 })
             }
 
-            // O link_material agora guarda o path absoluto (ajustado no upload.ts)
-            const filePath = material.link_material
-
-            if (!fs.existsSync(filePath)) {
-                return res.status(404).json({
-                    message: "Arquivo físico não encontrado no servidor"
-                })
-            }
-
-            // Pegamos a extensão original do arquivo salvo no disco
-            const extension = path.extname(filePath);
-            const downloadName = `${material.titulo_material}${extension}`;
-
-            return res.download(filePath, downloadName);
+            // Com bucket público, simplesmente redirecionamos para a URL do Supabase
+            // O browser fará o download diretamente do CDN do Supabase
+            return res.redirect(material.link_material)
         } catch (error: any) {
             return res.status(500).json({
                 message: error.message || "Erro ao processar o download"
