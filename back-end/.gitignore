@@ -59,9 +59,9 @@ Thumbs.db
 *.swp
 *.swo
 
-# Uploads (caso salve arquivos localmente)
-
-uploads/
+# Uploads — ignora os arquivos mas mantém a pasta via .gitkeep
+src/uploads/*
+!src/uploads/.gitkeep
 
 # SQLite (se quiser ignorar banco local)
 

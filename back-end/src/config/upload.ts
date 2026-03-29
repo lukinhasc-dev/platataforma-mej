@@ -1,19 +1,11 @@
 import multer from 'multer';
 import { Request } from 'express';
-import path from 'path';
 
-//Caminho para salvar os arquivos no banco de dados
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '..', 'uploads'));
-    },
-    filename: (req, file, cb) => {
-        const uniqueName = Date.now() + path.extname(file.originalname);
-        cb(null, uniqueName);
-    }
-});
+// Usar memoryStorage: o arquivo fica em buffer na memória
+// e é enviado diretamente ao Supabase Storage (sem salvar no disco)
+const storage = multer.memoryStorage();
 
-//Filtro para selecionar os arquivos
+// Filtro para selecionar os tipos permitidos
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowedTypes = [
         'application/pdf',
@@ -30,11 +22,11 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Formato inválido! Apenas PDF e PowerPoint.'));
+        cb(new Error('Formato inválido! Apenas PDF, PowerPoint, Word, Excel, PNG e JPEG.'));
     }
 };
 
-//Máximo de 10MB por arquivo
+// Máximo de 10MB por arquivo
 const upload = multer({
     storage,
     fileFilter,
