@@ -246,6 +246,42 @@ async function setupMobileSidebar() {
 }
 
 async function setupModals() {
+    // --- File Upload Zones - Interatividade ---
+    function setupFileZone(inputId, zoneId, nameId, iconId) {
+        const input = document.getElementById(inputId);
+        const zone = document.getElementById(zoneId);
+        const nameEl = document.getElementById(nameId);
+        if (!input || !zone || !nameEl) return;
+
+        input.addEventListener('change', () => {
+            if (input.files && input.files[0]) {
+                nameEl.textContent = input.files[0].name;
+                zone.classList.add('has-file');
+                const icon = zone.querySelector('.file-upload-icon i');
+                if (icon) {
+                    icon.className = 'fa-solid fa-circle-check';
+                }
+                const text = zone.querySelector('.file-upload-text');
+                if (text) text.textContent = 'Arquivo selecionado!';
+            } else {
+                resetFileZone(zone, nameEl, 'Clique para selecionar um arquivo');
+            }
+        });
+    }
+
+    function resetFileZone(zone, nameEl, defaultText = 'Clique para selecionar um arquivo') {
+        if (!zone || !nameEl) return;
+        zone.classList.remove('has-file');
+        nameEl.textContent = '';
+        const icon = zone.querySelector('.file-upload-icon i');
+        if (icon) icon.className = 'fa-solid fa-file-arrow-up';
+        const text = zone.querySelector('.file-upload-text');
+        if (text) text.textContent = defaultText;
+    }
+
+    setupFileZone('fileUpload', 'fileUploadZone', 'fileUploadName');
+    setupFileZone('editFileUpload', 'editFileUploadZone', 'editFileUploadName');
+
     // --- Modal de Criação de Material ---
     const uploadForm = document.getElementById('uploadForm');
     const submitUploadBtn = document.getElementById('submitUploadBtn');
@@ -280,6 +316,16 @@ async function setupModals() {
             showToast(`Arquivo "${titulo_material}" adicionado!`, 'success');
             document.getElementById('uploadModal').classList.add('hidden');
             uploadForm.reset();
+            const zone = document.getElementById('fileUploadZone');
+            const nameEl = document.getElementById('fileUploadName');
+            if (zone && nameEl) {
+                zone.classList.remove('has-file');
+                nameEl.textContent = '';
+                const icon = zone.querySelector('.file-upload-icon i');
+                if (icon) icon.className = 'fa-solid fa-file-arrow-up';
+                const text = zone.querySelector('.file-upload-text');
+                if (text) text.textContent = 'Clique para selecionar um arquivo';
+            }
         } catch (error) {
             console.error("Erro ao criar material:", error);
             showToast('Erro ao salvar arquivo.', 'error');
