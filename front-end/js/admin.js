@@ -23,6 +23,29 @@ window.showToast = function (message, type = 'success') {
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
 };
 
+async function refreshMateriais() {
+    try {
+        adminSlides = await getAllMateriais();
+        renderAcervoTable(adminSlides);
+        renderDashboardTable();
+        const totalFilesEl = document.getElementById('totalFilesCount');
+        if (totalFilesEl) totalFilesEl.innerText = adminSlides.length;
+    } catch (error) {
+        console.error("Erro ao atualizar materiais:", error);
+    }
+}
+
+async function refreshLideres() {
+    try {
+        adminLeaders = await getAllLideres();
+        renderLiderancaTable();
+        const totalLeadersEl = document.getElementById('totalLeadersCount');
+        if (totalLeadersEl) totalLeadersEl.innerText = adminLeaders.length;
+    } catch (error) {
+        console.error("Erro ao atualizar líderes:", error);
+    }
+}
+
 async function initAdmin() {
     setupMobileSidebar();
     setupModals();
@@ -38,13 +61,15 @@ async function initAdmin() {
 
     document.getElementById('totalFilesCount').innerText = adminSlides.length;
     document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
-    
+
     const totalDownloads = adminSlides.reduce((acc, slide) => acc + (slide.downloads_mes || 0), 0);
     document.getElementById('totalDownloadsCount').innerText = totalDownloads;
 
     renderDashboardTable();
     renderAcervoTable(adminSlides);
     renderLiderancaTable();
+    await refreshLideres();
+    await refreshMateriais();
 }
 
 window.initAdmin = initAdmin;
@@ -138,9 +163,7 @@ window.deleteFile = async function (id) {
         try {
             await deleteMaterial(id);
             showToast('Arquivo apagado.', 'error');
-            await renderAcervoTable(adminSlides);
-            renderDashboardTable();
-            document.getElementById('totalFilesCount').innerText = adminSlides.length;
+            await refreshMateriais();
         } catch (error) {
             console.error("Erro ao deletar arquivo:", error);
             showToast('Erro ao remover arquivo.', 'error');
@@ -201,8 +224,7 @@ window.deleteLeader = async function (id) {
         try {
             await deleteLider(id);
             showToast('Acesso revogado.', 'error');
-            await renderLiderancaTable();
-            document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+            await refreshLideres();
         } catch (error) {
             console.error("Erro ao deletar líder:", error);
             showToast('Erro ao remover líder.', 'error');
@@ -313,10 +335,7 @@ async function setupModals() {
 
             await createMaterial(formData);
 
-            adminSlides = await getAllMateriais();
-            renderAcervoTable(adminSlides);
-            renderDashboardTable();
-            document.getElementById('totalFilesCount').innerText = adminSlides.length;
+            await refreshMateriais();
 
             showToast(`Arquivo "${titulo_material}" adicionado!`, 'success');
             document.getElementById('uploadModal').classList.add('hidden');
@@ -363,10 +382,7 @@ async function setupModals() {
 
             await updateMaterial(id, formData);
 
-            adminSlides = await getAllMateriais();
-            renderAcervoTable(adminSlides);
-            renderDashboardTable();
-            document.getElementById('totalFilesCount').innerText = adminSlides.length;
+            await refreshMateriais();
 
             showToast('Material atualizado com sucesso!', 'success');
             document.getElementById('editFileModal').classList.add('hidden');
@@ -397,8 +413,7 @@ async function setupModals() {
 
             await createLider({ nome, cargo, email, senha });
 
-            await renderLiderancaTable();
-            document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+            await refreshLideres();
 
             showToast(`Acesso criado para ${nome}!`, 'success');
             document.getElementById('addLeaderModal').classList.add('hidden');
@@ -434,7 +449,7 @@ async function setupModals() {
 
             await updateLider(id, payload);
 
-            await renderLiderancaTable();
+            await refreshLideres();
 
             showToast(`Líder "${nome}" atualizado!`, 'success');
             document.getElementById('editLeaderModal').classList.add('hidden');

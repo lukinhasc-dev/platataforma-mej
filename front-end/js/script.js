@@ -63,6 +63,7 @@ async function init() {
     lideres = await loadLideres();
     setupScrollEffects();
     setupNavigation();
+    setupMobileMenu();
     setupLoginModal();
     setupViewerModal();
     renderFilters();
@@ -110,7 +111,7 @@ function setupScrollEffects() {
 //Função para configurar navegação
 async function setupNavigation() {
     const sections = document.querySelectorAll('section, main');
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('.nav-link, .nav-mobile-link');
 
     window.addEventListener('scroll', () => {
         let current = '';
@@ -126,14 +127,57 @@ async function setupNavigation() {
     });
 }
 
+//Função para configurar o menu mobile
+async function setupMobileMenu() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMobileBtn = document.getElementById('closeMobileMenuBtn');
+    const mobileLinks = document.querySelectorAll('.nav-mobile-link');
+
+    if(!mobileMenuBtn || !mobileMenu) return;
+
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    });
+
+    const closeMenu = () => {
+        mobileMenu.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    };
+
+    closeMobileBtn.addEventListener('click', closeMenu);
+    mobileMenu.addEventListener('click', (e) => { 
+        if (e.target === mobileMenu) closeMenu(); 
+    });
+
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+}
+
 //Função para configurar modal de login
 async function setupLoginModal() {
     const modal = document.getElementById('loginModal');
     const openBtn = document.getElementById('openLoginBtn');
+    const openBtnMobile = document.getElementById('mobileOpenLoginBtn');
     const closeBtn = document.getElementById('closeModalBtn');
     const loginForm = document.getElementById('loginForm');
 
-    openBtn.addEventListener('click', () => { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; });
+    const openModal = () => { 
+        modal.classList.remove('hidden'); 
+        document.body.style.overflow = 'hidden';
+        
+        // Se o menu mobile estiver aberto, fecha ele
+        const mobileMenu = document.getElementById('mobileMenu');
+        if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    };
+
+    if(openBtn) openBtn.addEventListener('click', openModal);
+    if(openBtnMobile) openBtnMobile.addEventListener('click', openModal);
+    
     closeBtn.addEventListener('click', () => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; });
     modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; } });
 
