@@ -2,7 +2,15 @@ import db from '../db'
 import { Material } from '../models/material.modal'
 
 export const getAll = async () => {
-    const result = await db.query("SELECT * FROM material")
+    const query = `
+        SELECT m.*, 
+               (SELECT count(*) FROM material_downloads md 
+                WHERE md.material_id = m.id 
+                AND md.downloaded_at >= date_trunc('month', current_date))::int as downloads_mes
+        FROM material m
+    `;
+
+    const result = await db.query(query)
     return result.rows
 }
 
@@ -46,4 +54,13 @@ export const remove = async (id: number) => {
     }
 
     return result.rows[0]
+}
+
+
+
+export const recordDownload = async (materialId: number) => {
+    return await db.query(
+        "INSERT INTO material_downloads (material_id) VALUES ($1)",
+        [materialId]
+    );
 }

@@ -4,6 +4,7 @@ import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downlo
 // Variáveis de estado global (no escopo do módulo)
 let adminSlides = [];
 let adminLeaders = [];
+let totalDownloads = 0;
 
 window.showToast = function (message, type = 'success') {
     let container = document.getElementById('toast-container');
@@ -37,6 +38,9 @@ async function initAdmin() {
 
     document.getElementById('totalFilesCount').innerText = adminSlides.length;
     document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+    
+    const totalDownloads = adminSlides.reduce((acc, slide) => acc + (slide.downloads_mes || 0), 0);
+    document.getElementById('totalDownloadsCount').innerText = totalDownloads;
 
     renderDashboardTable();
     renderAcervoTable(adminSlides);
@@ -95,6 +99,7 @@ async function renderAcervoTable(dataToRender) {
             <td><span class="badge-category text-xs"><i class="fa-solid fa-tag mr-1"></i> ${material.categoria_material}</span></td>
             <td class="text-gray-500 hidden-mobile">${material.autor_material}</td>
             <td class="text-gray-500 hidden-mobile">${new Date(material.created_at).toLocaleDateString('pt-BR')}</td>
+            <td class="text-center"><span class="font-bold text-orange-500">${material.downloads_mes || 0}</span></td>
             <td>
                 <div class="flex gap-2">
                     <button class="action-btn text-green-500 hover:bg-green-50 hover-lift" onclick="downloadMaterial(${material.id}, '${material.titulo_material}')" title="Baixar"><i class="fa-solid fa-download"></i></button>

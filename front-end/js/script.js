@@ -206,6 +206,9 @@ async function setupViewerModal() {
             document.getElementById('fallbackDownloadBtn').onclick = () => window.downloadMaterial(file.id, file.titulo_material);
         }
 
+
+
+
         viewerModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     };
@@ -295,6 +298,8 @@ async function renderSlides() {
         });
     }
 }
+
+
 
 // Tornar acessível globalmente
 window.downloadMaterial = async (id, filename) => {

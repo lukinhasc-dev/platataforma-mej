@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { getAll, create, update, remove, getById } from '../service/materiais.service'
+import { getAll, create, update, remove, getById, recordDownload } from '../service/materiais.service'
 import path from 'path'
 import supabase from '../config/supabase'
 
@@ -136,6 +136,8 @@ export class MaterialController {
         }
 
         try {
+            await recordDownload(idNumber)
+
             const material = await getById(idNumber)
 
             if (!material?.link_material) {
@@ -144,8 +146,6 @@ export class MaterialController {
                 })
             }
 
-            // Com bucket público, simplesmente redirecionamos para a URL do Supabase
-            // O browser fará o download diretamente do CDN do Supabase
             return res.redirect(material.link_material)
         } catch (error: any) {
             return res.status(500).json({
