@@ -19,6 +19,10 @@
     <script type="module" src="/front-end/js/script.js"></script>
 </head>
 
+
+
+<html>
+
 <body class="bg-pattern antialiased">
 
     <header class="glass-header navbar" id="navbar">
@@ -80,66 +84,6 @@
         </div>
     </section>
 
-    <main id="acervo" class="container main-content relative">
-        <div class="section-header reveal">
-            <h2 class="section-title">Explore os materiais.</h2>
-            <div class="title-divider"></div>
-        </div>
-
-        <div class="search-section reveal hover-lift" style="transition-delay: 100ms;">
-            <div class="search-layout">
-                <div class="search-input-group">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Que material procura hoje?">
-                </div>
-                <div class="filters-scroll-area">
-                    <div class="filters-container" id="categoryFilters"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="statusMessage" class="status-message reveal"></div>
-
-        <div id="slidesGrid" class="cards-grid"></div>
-
-        <div id="emptyState" class="empty-state hidden fade-in">
-            <div class="empty-icon hover-float">
-                <i class="fa-solid fa-ghost"></i>
-            </div>
-            <h3>Nenhum resultado</h3>
-            <p>Não conseguimos encontrar o que procura com estes filtros.</p>
-            <button onclick="resetFilters()" class="btn-reset btn-ripple">
-                <i class="fa-solid fa-rotate-right"></i> Limpar Pesquisa
-            </button>
-        </div>
-    </main>
-
-    <section id="sobre" class="container main-content relative">
-        <div class="section-header reveal">
-            <h2 class="section-title">Sobre a Plataforma</h2>
-            <div class="title-divider"></div>
-        </div>
-
-        <div class="about-grid reveal">
-            <div class="about-card hover-lift">
-                <div class="about-icon"><i class="fa-solid fa-hands-holding-circle"></i></div>
-                <h3>O Nosso Propósito</h3>
-                <p>Este portal nasceu para facilitar o acesso aos materiais da Igreja Missão Evangélica Jaboque.
-                    Queremos
-                    que os membros
-                    tenham acesso aos materiais de cultos, estudos, apostilas, formulários e outros documentos, em
-                    qualquer lugar e a
-                    qualquer hora.
-                </p>
-            </div>
-            <div class="about-card hover-lift">
-                <div class="about-icon"><i class="fa-solid fa-laptop-code"></i></div>
-                <h3>Tecnologia e Fé</h3>
-                <p>Desenvolvido como um projeto tecnológico social, unimos ferramentas modernas para servir a
-                    comunidade. Uma plataforma rápida, segura e pensada para todas as idades.</p>
-            </div>
-        </div>
-    </section>
 
     <footer class="footer">
         <div class="container">
@@ -223,68 +167,6 @@
             </div>
         </div>
     </footer>
-
-    <div id="mobileMenu" class="mobile-menu-overlay hidden">
-        <div class="mobile-menu-container">
-            <button class="modal-close" id="closeMobileMenuBtn"><i class="fa-solid fa-xmark"></i></button>
-            <div class="logo-icon-wrapper"
-                style="margin: 0 auto; width: 4.5rem; height: 4.5rem; background-color: var(--color-dark); margin-bottom: 2rem;">
-                <img src="/front-end/assets/logo.png" class="logo-icon">
-            </div>
-            <nav class="nav-mobile">
-                <a href="#inicio" class="nav-mobile-link active">Início</a>
-                <a href="#acervo" class="nav-mobile-link">Materiais</a>
-                <a href="#sobre" class="nav-mobile-link">Sobre</a>
-                <button class="btn-leadership btn-ripple" id="mobileOpenLoginBtn"
-                    style="width: 100%; display: flex; justify-content: center; margin-top: 1rem;">
-                    <i class="fa-solid fa-lock"></i> Área de Liderança
-                </button>
-            </nav>
-        </div>
-    </div>
-
-    <div id="loginModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-header">
-                <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
-                <h3>Área da Liderança</h3>
-                <p>Acesso restrito para a gestão da plataforma.</p>
-            </div>
-            <form class="login-form" id="loginForm">
-                <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" placeholder="lideranca@oficialmej.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Palavra-passe</label>
-                    <input type="password" id="password" placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn-submit btn-ripple">Entrar no Painel</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="viewerModal" class="modal-overlay hidden">
-        <div class="modal-content viewer-content">
-            <div class="viewer-header">
-                <h3 id="viewerTitle">Nome do Ficheiro</h3>
-                <button class="modal-close relative-close" id="closeViewerBtn"><i
-                        class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="viewer-body">
-                <iframe id="fileIframe" class="viewer-iframe fade-in" src=""
-                    title="Visualizador de Documentos"></iframe>
-                <div id="viewerFallback" class="hidden viewer-fallback fade-in">
-                    <i class="fa-solid fa-file-arrow-down mb-2 text-4xl text-gold hover-float"></i>
-                    <p>Este tipo de ficheiro não suporta visualização direta.</p>
-                    <button class="btn-submit mt-4 w-auto px-6 btn-ripple" id="fallbackDownloadBtn">Fazer
-                        Download</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </body>
 
 </html>
