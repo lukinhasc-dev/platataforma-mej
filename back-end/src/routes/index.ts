@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authMiddleware } from "../middlewares/auth";
 import lideresRoutes from "./lideres.routes";
 import materiaisRoutes from "./materiais.routes";
 

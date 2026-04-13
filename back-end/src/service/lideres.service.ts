@@ -77,6 +77,7 @@ export const remove = async (id: number) => {
 }
 
 export const login = async (email: string, senha: string) => {
+
     if (!email || !senha) {
         throw new Error("Email e senha são obrigatórios.")
     }

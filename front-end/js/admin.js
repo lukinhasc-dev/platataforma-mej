@@ -47,6 +47,12 @@ async function refreshLideres() {
 }
 
 async function initAdmin() {
+    // Guard de autenticação — redireciona se não tiver token
+    if (!localStorage.getItem('mej_token')) {
+        window.location.href = '/front-end/index.html';
+        return;
+    }
+
     setupMobileSidebar();
     setupModals();
     setupAcervoSearchAndFilter();

@@ -201,7 +201,8 @@ async function setupLoginModal() {
 
             if (resultado.success) {
                 showToast('Login efetuado com sucesso!', 'success');
-                setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 800);
+                localStorage.setItem('mej_token', resultado.token);
+                setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 1000);
             } else {
                 showToast(resultado.message || 'Email ou senha incorretos.', 'error');
                 btn.innerHTML = 'Entrar no Painel';

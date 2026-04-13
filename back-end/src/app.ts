@@ -2,7 +2,11 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import router from "./routes/index";
+import cookieParser from "cookie-parser";
+import dotenv from 'dotenv';
+import path from 'path';
 
+dotenv.config();
 const app = express();
 
 // Lista de origens permitidas (local + produção)
@@ -25,8 +29,18 @@ app.use(cors({
     credentials: true,
 }));
 
-app.use(helmet());
+// Helmet com CSP relaxado para permitir os assets do frontend
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
+
 app.use(express.json());
+app.use(cookieParser());
+
+// Serve os arquivos estáticos do frontend (JS, CSS, imagens, etc.)
+app.use(express.static(path.join(process.cwd(), '..', 'front-end')));
+
 app.use("/api", router);
 
 export default app;
+
