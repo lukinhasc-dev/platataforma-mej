@@ -9,14 +9,12 @@ import path from 'path';
 dotenv.config();
 const app = express();
 
-// Lista de origens permitidas (local + produção)
+// Lista de origens permitidas (local + produção) 
 const allowedOrigins = [
     "http://localhost:3001",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
-    // Adicione aqui sua URL do Vercel após o deploy:
-    // "https://meu-projeto.vercel.app",
-    process.env.FRONTEND_URL, // variável de ambiente para o domínio em produção
+    process.env.FRONTEND_URL,
 ].filter(Boolean) as string[];
 
 app.use(cors({
@@ -29,7 +27,7 @@ app.use(cors({
     credentials: true,
 }));
 
-// Helmet com CSP relaxado para permitir os assets do frontend
+//Evita o bloqueio de URL's externas como Google Fonts, Vercel, FontAwesome, etc.
 app.use(helmet({
     contentSecurityPolicy: false,
 }));

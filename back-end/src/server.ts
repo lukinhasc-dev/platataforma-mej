@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Carrega o .env antes de qualquer import que dependa de process.env
+dotenv.config();
 
 import app from "./app";
 

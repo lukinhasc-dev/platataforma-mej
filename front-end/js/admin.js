@@ -152,7 +152,7 @@ async function renderLiderancaTable() {
                 ${leader.nome}
             </td>
             <td><span class="text-sm font-medium text-gray-700">${leader.cargo}</span></td>
-            <td class="text-gray-500 hidden-mobile">${leader.email}</td>
+            <td class="text-gray-500">${leader.email}</td>
             <td>
                 <div class="flex gap-2">
                     <button class="action-btn text-blue-500 hover:bg-blue-50 hover-lift" onclick="editLeader(${leader.id})" title="Editar"><i class="fa-solid fa-edit"></i></button>

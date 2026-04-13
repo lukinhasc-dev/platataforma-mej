@@ -244,15 +244,32 @@ async function setupViewerModal() {
 
         const fileUrl = file.link_material || file.url || '';
         const ext = fileUrl.split('.').pop()?.split('?')[0].toUpperCase() || '';
-        const isPDF = ext === 'PDF';
+
+        // Tipos suportados pelo Microsoft Office Online (URL pública do Supabase funciona direto)
+        const OFFICE_EXTS = ['DOCX', 'XLSX', 'PPTX', 'DOC', 'XLS', 'PPT'];
+        // Imagens renderizam nativamente no iframe
+        const IMAGE_EXTS = ['PNG', 'JPEG', 'JPG', 'GIF', 'WEBP'];
+
+        let iframeSrc = null;
+
+        if (ext === 'PDF') {
+            iframeSrc = fileUrl;
+        } else if (OFFICE_EXTS.includes(ext)) {
+            iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+        } else if (IMAGE_EXTS.includes(ext)) {
+            iframeSrc = fileUrl;
+        }
 
         document.getElementById('viewerTitle').textContent = file.titulo_material;
-        iframe.classList.toggle('hidden', !isPDF);
-        fallback.classList.toggle('hidden', isPDF);
 
-        if (isPDF) {
-            iframe.src = fileUrl;
+        if (iframeSrc) {
+            iframe.src = iframeSrc;
+            iframe.classList.remove('hidden');
+            fallback.classList.add('hidden');
         } else {
+            // Tipo não suportado → botão de download
+            iframe.classList.add('hidden');
+            fallback.classList.remove('hidden');
             document.getElementById('fallbackDownloadBtn').onclick = () => window.downloadMaterial(file.id, file.titulo_material);
         }
 
