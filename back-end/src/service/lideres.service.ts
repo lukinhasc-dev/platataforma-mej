@@ -10,7 +10,7 @@ export const getAll = async () => {
 export const create = async (lider: Lideres) => {
 
     //Preenchimento de todos os campos são obrigatórios
-    if (!lider.nome || !lider.email || !lider.cargo || !lider.senha) {
+    if (!lider.nome || !lider.email || !lider.cargo) {
         throw new Error("Todos os campos são obrigatórios")
     }
 
@@ -20,11 +20,6 @@ export const create = async (lider: Lideres) => {
         throw new Error("Email inválido.")
     }
 
-    //Senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial
-    const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    if (!senhaRegex.test(lider.senha)) {
-        throw new Error("Senha inválida. A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.")
-    }
 
     //Verificar se o lider já está cadastrado, no banco de dados o email está como UNIQUE!
     const verificarLider = await db.query("SELECT 1 FROM lideres WHERE email = $1", [lider.email])
@@ -34,10 +29,9 @@ export const create = async (lider: Lideres) => {
     }
 
     const salt = 10
-    const hashSenha = await bcrypt.hash(lider.senha, salt)
 
     try {
-        const result = await db.query("INSERT INTO lideres (nome, email, cargo, senha) VALUES ($1, $2, $3, $4) RETURNING *", [lider.nome, lider.email, lider.cargo, hashSenha])
+        const result = await db.query("INSERT INTO lideres (nome, email, cargo) VALUES ($1, $2, $3) RETURNING *", [lider.nome, lider.email, lider.cargo])
         return result.rows[0]
     } catch (error: any) {
         if (error.code === '23505') {
@@ -46,6 +40,42 @@ export const create = async (lider: Lideres) => {
 
         throw new Error("Erro ao criar lider.")
     }
+}
+
+// Gera token no banco e retorna o UUID
+export const gerarToken = async (lider_id: number, tipo: 'convite' | 'recuperacao'): Promise<string> => {
+    // Invalida tokens anteriores do mesmo tipo para esse líder
+    await db.query(
+        "UPDATE lider_tokens SET usado = TRUE WHERE lider_id = $1 AND tipo = $2 AND usado = FALSE",
+        [lider_id, tipo]
+    )
+    const result = await db.query(
+        "INSERT INTO lider_tokens (lider_id, tipo) VALUES ($1, $2) RETURNING token",
+        [lider_id, tipo]
+    )
+    return result.rows[0].token
+}
+// Valida o token e define nova senha
+export const definirSenha = async (token: string, novaSenha: string) => {
+    const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    if (!senhaRegex.test(novaSenha)) {
+        throw new Error("Senha inválida. Mínimo 8 caracteres, maiúscula, minúscula, número e especial.")
+    }
+    const tokenRow = await db.query(
+        "SELECT * FROM lider_tokens WHERE token = $1 AND usado = FALSE AND expira_em > NOW()",
+        [token]
+    )
+    if (tokenRow.rows.length === 0) throw new Error("Link inválido ou expirado.")
+    const { lider_id } = tokenRow.rows[0]
+    const hash = await bcrypt.hash(novaSenha, 10)
+    await db.query("UPDATE lideres SET senha = $1 WHERE id = $2", [hash, lider_id])
+    await db.query("UPDATE lider_tokens SET usado = TRUE WHERE token = $1", [token])
+    return { success: true }
+}
+// Busca líder por email (para recuperação de senha)
+export const findByEmail = async (email: string) => {
+    const result = await db.query("SELECT * FROM lideres WHERE email = $1", [email])
+    return result.rows[0] || null
 }
 
 export const update = async (id: number, lider: Lideres) => {

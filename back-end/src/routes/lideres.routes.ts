@@ -9,6 +9,8 @@ const controllerLideres = new LideresController()
 router.get('/', authMiddleware, controllerLideres.getAllLideres)
 router.post('/', authMiddleware, controllerLideres.createLider)
 router.post('/login', controllerLideres.loginLider)
+router.post('/forgot-password', controllerLideres.forgotPassword)
+router.post('/set-password', controllerLideres.setPassword)
 router.get('/painel', authMiddleware, (req, res) => {
     res.sendFile(path.join(process.cwd(), '..', 'front-end', 'admin.html'))
 })

@@ -1,5 +1,6 @@
 import { getAllMateriais, downloadMaterial } from "../api/material.index.js";
 import { getAllLideres, loginLider } from "../api/lideres.index.js";
+import { API_URL } from "../config.js";
 
 let slides = [];
 let lideres = [];
@@ -162,24 +163,43 @@ async function setupLoginModal() {
     const openBtnMobile = document.getElementById('mobileOpenLoginBtn');
     const closeBtn = document.getElementById('closeModalBtn');
     const loginForm = document.getElementById('loginForm');
+    const loginPanel = document.getElementById('loginPanel');
+    const forgotPanel = document.getElementById('forgotPanel');
+    const forgotForm = document.getElementById('forgotForm');
 
     const openModal = () => {
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-
-        // Se o menu mobile estiver aberto, fecha ele
         const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.add('hidden');
-        }
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+    };
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        // Reset para o painel de login ao fechar
+        loginPanel.style.display = '';
+        forgotPanel.style.display = 'none';
     };
 
     if (openBtn) openBtn.addEventListener('click', openModal);
     if (openBtnMobile) openBtnMobile.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-    closeBtn.addEventListener('click', () => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; });
-    modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; } });
+    // Toggle esqueceu/voltar
+    document.getElementById('showForgotBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        loginPanel.style.display = 'none';
+        forgotPanel.style.display = '';
+    });
+    document.getElementById('showLoginBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        forgotPanel.style.display = 'none';
+        loginPanel.style.display = '';
+    });
 
+    // Submit do formulário de login
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -196,7 +216,6 @@ async function setupLoginModal() {
         btn.disabled = true;
 
         try {
-            // Deixa o backend comparar com bcrypt.compare (senha está hashada no banco)
             const resultado = await loginLider(emailInput, passwordInput);
 
             if (resultado.success) {
@@ -212,6 +231,33 @@ async function setupLoginModal() {
             const msg = error?.response?.data?.message || 'Email ou senha incorretos.';
             showToast(msg, 'error');
             btn.innerHTML = 'Entrar no Painel';
+            btn.disabled = false;
+        }
+    });
+
+    // Submit do formulário de recuperação
+    forgotForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgotEmail').value.trim();
+        const btn = document.getElementById('forgotBtn');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+        btn.disabled = true;
+
+        try {
+            await fetch(`${API_URL}/api/lideres/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            // Sempre mostra sucesso (segurança — não revela se email existe)
+            showToast('Se o email existir, você receberá as instruções!', 'success');
+            forgotForm.reset();
+            forgotPanel.style.display = 'none';
+            loginPanel.style.display = '';
+        } catch {
+            showToast('Erro de conexão. Tente novamente.', 'error');
+        } finally {
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Link';
             btn.disabled = false;
         }
     });
