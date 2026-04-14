@@ -17,8 +17,9 @@ const categories = [
 async function loadMateriais() {
     try {
         const data = await getAllMateriais();
-        slides = data;
-        return data;
+        // pg retorna IDs como string — normaliza para number para evitar falha no .find()
+        slides = data.map(s => ({ ...s, id: Number(s.id) }));
+        return slides;
     } catch (error) {
         console.error("Erro ao carregar materiais:", error);
         return [];
@@ -35,8 +36,6 @@ async function loadLideres() {
         return [];
     }
 }
-
-
 
 
 window.showToast = async function (message, type = 'success') {
@@ -134,7 +133,7 @@ async function setupMobileMenu() {
     const closeMobileBtn = document.getElementById('closeMobileMenuBtn');
     const mobileLinks = document.querySelectorAll('.nav-mobile-link');
 
-    if(!mobileMenuBtn || !mobileMenu) return;
+    if (!mobileMenuBtn || !mobileMenu) return;
 
     mobileMenuBtn.addEventListener('click', () => {
         mobileMenu.classList.remove('hidden');
@@ -147,8 +146,8 @@ async function setupMobileMenu() {
     };
 
     closeMobileBtn.addEventListener('click', closeMenu);
-    mobileMenu.addEventListener('click', (e) => { 
-        if (e.target === mobileMenu) closeMenu(); 
+    mobileMenu.addEventListener('click', (e) => {
+        if (e.target === mobileMenu) closeMenu();
     });
 
     mobileLinks.forEach(link => {
@@ -164,20 +163,20 @@ async function setupLoginModal() {
     const closeBtn = document.getElementById('closeModalBtn');
     const loginForm = document.getElementById('loginForm');
 
-    const openModal = () => { 
-        modal.classList.remove('hidden'); 
+    const openModal = () => {
+        modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-        
+
         // Se o menu mobile estiver aberto, fecha ele
         const mobileMenu = document.getElementById('mobileMenu');
-        if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
             mobileMenu.classList.add('hidden');
         }
     };
 
-    if(openBtn) openBtn.addEventListener('click', openModal);
-    if(openBtnMobile) openBtnMobile.addEventListener('click', openModal);
-    
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (openBtnMobile) openBtnMobile.addEventListener('click', openModal);
+
     closeBtn.addEventListener('click', () => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; });
     modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; } });
 
@@ -202,7 +201,8 @@ async function setupLoginModal() {
 
             if (resultado.success) {
                 showToast('Login efetuado com sucesso!', 'success');
-                setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 800);
+                localStorage.setItem('mej_token', resultado.token);
+                setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 1000);
             } else {
                 showToast(resultado.message || 'Email ou senha incorretos.', 'error');
                 btn.innerHTML = 'Entrar no Painel';
@@ -234,24 +234,44 @@ async function setupViewerModal() {
         setTimeout(() => { iframe.src = ''; }, 300);
     }
 
-    window.openViewer = async (id) => {
-        const file = slides.find(s => s.id === id);
-        if (!file) return;
+    window.openViewer = (id) => {
+        const numId = Number(id);
+        const file = slides.find(s => Number(s.id) === numId);
+        if (!file) {
+            console.warn('[openViewer] Material não encontrado. id recebido:', id, '| ids disponíveis:', slides.map(s => s.id));
+            return;
+        }
+
+        const fileUrl = file.link_material || file.url || '';
+        const ext = fileUrl.split('.').pop()?.split('?')[0].toUpperCase() || '';
+
+        // Tipos suportados pelo Microsoft Office Online (URL pública do Supabase funciona direto)
+        const OFFICE_EXTS = ['DOCX', 'XLSX', 'PPTX', 'DOC', 'XLS', 'PPT'];
+        // Imagens renderizam nativamente no iframe
+        const IMAGE_EXTS = ['PNG', 'JPEG', 'JPG', 'GIF', 'WEBP'];
+
+        let iframeSrc = null;
+
+        if (ext === 'PDF') {
+            iframeSrc = fileUrl;
+        } else if (OFFICE_EXTS.includes(ext)) {
+            iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+        } else if (IMAGE_EXTS.includes(ext)) {
+            iframeSrc = fileUrl;
+        }
 
         document.getElementById('viewerTitle').textContent = file.titulo_material;
 
-        const fileUrl = file.link_material || file.url || '';
-        const fileType = (file.tipo_material || file.type || '').toUpperCase();
-
-        if (fileType === 'PDF') {
-            iframe.classList.remove('hidden'); fallback.classList.add('hidden'); iframe.src = fileUrl;
+        if (iframeSrc) {
+            iframe.src = iframeSrc;
+            iframe.classList.remove('hidden');
+            fallback.classList.add('hidden');
         } else {
-            iframe.classList.add('hidden'); fallback.classList.remove('hidden');
+            // Tipo não suportado → botão de download
+            iframe.classList.add('hidden');
+            fallback.classList.remove('hidden');
             document.getElementById('fallbackDownloadBtn').onclick = () => window.downloadMaterial(file.id, file.titulo_material);
         }
-
-
-
 
         viewerModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -310,7 +330,7 @@ async function renderSlides() {
         empty.classList.add('hidden');
 
         grid.innerHTML = filtered.map((slide, index) => {
-            const tipo = (slide.tipo_material || slide.type || 'Ficheiro').toUpperCase();
+            const tipo = (slide.link_material || slide.url || '').split('.').pop()?.split('?')[0].toUpperCase() || 'Ficheiro';
             const data = slide.created_at ? new Date(slide.created_at).toLocaleDateString('pt-PT') : '—';
             return `
             <div class="premium-card reveal" style="transition-delay: ${index * 60}ms">
@@ -329,7 +349,7 @@ async function renderSlides() {
                     <div class="card-footer">
                         <div class="card-date"><i class="fa-regular fa-calendar"></i> ${data}</div>
                         <div class="card-actions">
-                            <button onclick="openViewer(${slide.id})" class="btn-action btn-view hover-lift" title="Visualizar"><i class="fa-regular fa-eye"></i></button>
+                            <button onclick="window.openViewer(${slide.id})" class="btn-action btn-view hover-lift" title="Visualizar"><i class="fa-regular fa-eye"></i></button>
                             <button onclick="window.downloadMaterial(${slide.id}, '${slide.titulo_material}')" class="btn-action btn-download btn-ripple hover-lift" title="Baixar"><i class="fa-solid fa-download"></i></button>
                         </div>
                     </div>

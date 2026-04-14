@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { getAll, create, update, remove, login } from '../service/lideres.service'
+import jwt from 'jsonwebtoken'
 
 export class LideresController {
     async getAllLideres(req: Request, res: Response) {
@@ -65,10 +66,19 @@ export class LideresController {
     }
 
     async loginLider(req: Request, res: Response) {
-        const { email, senha } = req.body
         try {
+            const { email, senha } = req.body
             const lider = await login(email, senha)
-            return res.status(200).json({ success: true, lider })
+
+            const token = jwt.sign({ id: lider.id, email: lider.email }, process.env.JWT_SECRET!, { expiresIn: '1d' })
+
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production', // false em dev (localhost é HTTP)
+                sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            })
+
+            return res.status(200).json({ success: true, lider, token })
         } catch (error: any) {
             return res.status(401).json({
                 success: false,
