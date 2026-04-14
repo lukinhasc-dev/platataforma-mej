@@ -201,7 +201,20 @@ window.editFile = function (id) {
     document.getElementById('editFileTitle').value = material.titulo_material;
     document.getElementById('editFileAuthor').value = material.autor_material;
     document.getElementById('editFileCategory').value = material.categoria_material;
-    document.getElementById('editFileUpload').value = '';
+
+    // Reseta o campo de arquivo para evitar envio indevido de upload anterior
+    const editFileInput = document.getElementById('editFileUpload');
+    if (editFileInput) editFileInput.value = '';
+    const zone = document.getElementById('editFileUploadZone');
+    const nameEl = document.getElementById('editFileUploadName');
+    if (zone && nameEl) {
+        zone.classList.remove('has-file');
+        nameEl.textContent = '';
+        const icon = zone.querySelector('.file-upload-icon i');
+        if (icon) icon.className = 'fa-solid fa-file-arrow-up';
+        const text = zone.querySelector('.file-upload-text');
+        if (text) text.textContent = 'Clique para substituir o arquivo (opcional)';
+    }
 
     document.getElementById('editFileModal').classList.remove('hidden');
 };
@@ -392,6 +405,7 @@ async function setupModals() {
 
             showToast('Material atualizado com sucesso!', 'success');
             document.getElementById('editFileModal').classList.add('hidden');
+            editFileForm.reset();
         } catch (error) {
             console.error('Erro ao editar material:', error);
             showToast('Erro ao atualizar material.', 'error');
@@ -417,6 +431,31 @@ async function setupModals() {
             const email = document.getElementById('leaderEmail').value;
             const senha = document.getElementById('leaderPassword').value;
 
+
+            const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!senha || !senhaRegex.test(senha)) {
+                showToast("Senha inválida. A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.", "error");
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showToast("Email inválido, insira um email válido", "error");
+                return;
+            }
+
+            const nomeRegex = /^[A-Za-zÀ-ÖØ-öçÇ ]+$/;
+            if (!nome || !nomeRegex.test(nome)) {
+                showToast("Nome inválido, insira um nome válido", "error");
+                return;
+            }
+
+            const cargoRegex = /^[A-Za-zÀ-ÖØ-öçÇ ]+$/;
+            if (!cargo || !cargoRegex.test(cargo)) {
+                showToast("Cargo inválido, insira um cargo válido", "error");
+                return;
+            }
+
             await createLider({ nome, cargo, email, senha });
 
             await refreshLideres();
@@ -425,7 +464,6 @@ async function setupModals() {
             document.getElementById('addLeaderModal').classList.add('hidden');
             addLeaderForm.reset();
         } catch (error) {
-            console.error("Erro ao criar líder:", error);
             showToast("Erro ao criar líder", "error");
         } finally {
             submitLeaderBtn.innerHTML = originalText;

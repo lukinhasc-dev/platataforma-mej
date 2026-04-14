@@ -81,14 +81,15 @@ export class MaterialController {
         try {
             let linkMaterial = req.body.link_material
 
-            // Se um novo arquivo foi enviado, faz upload e usa a nova URL
             if (req.file) {
-                // Deleta o arquivo antigo do Storage (se existir e for URL do Supabase)
+                // Novo arquivo: deleta o antigo e faz upload do novo
                 const existing = await getById(idNumber)
-                if (existing?.link_material) {
-                    await deleteFromSupabase(existing.link_material)
-                }
+                if (existing?.link_material) await deleteFromSupabase(existing.link_material)
                 linkMaterial = await uploadToSupabase(req.file)
+            } else if (!linkMaterial) {
+                // Sem arquivo novo: preserva o link atual do banco
+                const existing = await getById(idNumber)
+                linkMaterial = existing?.link_material
             }
 
             const result = await update(idNumber, {

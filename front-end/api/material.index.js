@@ -25,20 +25,13 @@ export const deleteMaterial = async (id) => {
 }
 
 export const downloadMaterial = async (id, filename = 'material') => {
-    const response = await api.get(`/material/download/${id}`, {
-        responseType: 'blob'
-    });
-
-    const blob = new Blob([response.data], { type: response.headers['content-type'] });
-    const url = window.URL.createObjectURL(blob);
+    // Usa anchor nativo para o browser seguir o redirect 302 do backend → Supabase sem problemas de CORS
     const link = document.createElement('a');
-    link.href = url;
-
+    link.href = `${api.defaults.baseURL}/material/download/${id}`;
     link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.URL.revokeObjectURL(url);
 }
 
 
