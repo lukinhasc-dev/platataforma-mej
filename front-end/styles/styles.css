@@ -1873,6 +1873,7 @@ body {
 
 /* Compacta a file-upload-zone nos modais de upload/edição em desktop */
 @media (min-width: 481px) {
+
     #uploadModal .file-upload-zone,
     #editFileModal .file-upload-zone {
         padding: 1rem 1rem;
@@ -3005,7 +3006,9 @@ body {
     transition: background-color 0.2s;
 }
 
-.terms-summary::-webkit-details-marker { display: none; }
+.terms-summary::-webkit-details-marker {
+    display: none;
+}
 
 .terms-summary:hover {
     background-color: var(--color-gray-50);
@@ -3049,7 +3052,8 @@ body {
 
 .terms-body {
     padding: 0 1.5rem 1.5rem 1.5rem;
-    padding-left: calc(1.5rem + 2.25rem + 1rem); /* alinha com texto do título */
+    padding-left: calc(1.5rem + 2.25rem + 1rem);
+    /* alinha com texto do título */
 }
 
 .terms-body p {
@@ -3099,5 +3103,62 @@ body {
     .terms-body p,
     .terms-body ul li {
         font-size: 0.85rem;
+    }
+
+    /* =========================================
+   SET PASSWORD
+========================================= */
+    body.set-password-body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-bg);
+        background-image: radial-gradient(var(--color-pattern-dot) 1px, transparent 1px);
+        background-size: 30px 30px;
+        padding: 1rem;
+    }
+
+    .req {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--color-gray-400);
+        margin-top: 0.25rem;
+        transition: color 0.2s;
+    }
+
+    .req i {
+        font-size: 0.75rem;
+    }
+
+    .req.ok {
+        color: #22c55e;
+    }
+
+    .req.fail {
+        color: var(--color-error);
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+
+    .toggle-senha {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-gray-400);
+        padding: 0;
+        font-size: 1rem;
+    }
+
+    .toggle-senha:hover {
+        color: var(--color-dark);
     }
 }
