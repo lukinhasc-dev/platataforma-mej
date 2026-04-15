@@ -36,7 +36,7 @@
 
                 <nav class="nav-desktop">
                     <a href="#inicio" class="nav-link active">Início</a>
-                    <a href="#acervo" class="nav-link">Materiais</a>
+                    <a href="#materiais" class="nav-link">Materiais</a>
                     <a href="#sobre" class="nav-link">Sobre</a>
                 </nav>
 
@@ -66,7 +66,7 @@
             <p class="hero-description">
                 Acesse e estude conteúdos que fortalecem sua fé e aprofundam seu conhecimento na Palavra.
             </p>
-            <a href="#acervo" class="scroll-down-btn hover-float">
+            <a href="#materiais" class="scroll-down-btn hover-float">
                 <i class="fa-solid fa-arrow-down"></i>
             </a>
         </div>
@@ -80,7 +80,7 @@
         </div>
     </section>
 
-    <main id="acervo" class="container main-content relative">
+    <main id="materiais" class="container main-content relative">
         <div class="section-header reveal">
             <h2 class="section-title">Explore os materiais.</h2>
             <div class="title-divider"></div>
@@ -246,24 +246,60 @@
     <div id="loginModal" class="modal-overlay hidden">
         <div class="modal-content">
             <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-header">
-                <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
-                <h3>Área da Liderança</h3>
-                <p>Acesso restrito para a gestão da plataforma.</p>
+
+            <!-- Painel de Login -->
+            <div id="loginPanel">
+                <div class="modal-header">
+                    <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+                    <h3>Área da Liderança</h3>
+                    <p>Acesso restrito para a gestão da plataforma.</p>
+                </div>
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="lideranca@oficialmej.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Palavra-passe</label>
+                        <input type="password" id="password" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-submit btn-ripple">Entrar no Painel</button>
+                    <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+                        <a href="#" id="showForgotBtn"
+                            style="color:var(--color-accent);text-decoration:none;font-weight:600">
+                            <i class="fa-solid fa-key" style="font-size:0.75rem"></i> Esqueceu a senha?
+                        </a>
+                    </p>
+                </form>
             </div>
-            <form class="login-form" id="loginForm">
-                <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" placeholder="lideranca@oficialmej.com" required>
+
+            <!-- Painel de Recuperação de Senha -->
+            <div id="forgotPanel" style="display:none">
+                <div class="modal-header">
+                    <div class="modal-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <h3>Recuperar Senha</h3>
+                    <p>Insira o seu email e enviaremos um link para criar uma nova senha.</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">Palavra-passe</label>
-                    <input type="password" id="password" placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn-submit btn-ripple">Entrar no Painel</button>
-            </form>
+                <form class="login-form" id="forgotForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">E-mail cadastrado</label>
+                        <input type="email" id="forgotEmail" placeholder="lideranca@oficialmej.com" required>
+                    </div>
+                    <button type="submit" class="btn-submit btn-ripple" id="forgotBtn">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Link
+                    </button>
+                    <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+                        <a href="#" id="showLoginBtn"
+                            style="color:var(--color-gray-500);text-decoration:none;font-weight:600">
+                            <i class="fa-solid fa-arrow-left" style="font-size:0.75rem"></i> Voltar ao login
+                        </a>
+                    </p>
+                </form>
+            </div>
+
         </div>
     </div>
+
 
     <div id="viewerModal" class="modal-overlay hidden">
         <div class="modal-content viewer-content">

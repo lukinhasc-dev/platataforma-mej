@@ -232,7 +232,6 @@ window.editLeader = function (id) {
     document.getElementById('editLeaderName').value = leader.nome;
     document.getElementById('editLeaderRole').value = leader.cargo;
     document.getElementById('editLeaderEmail').value = leader.email;
-    document.getElementById('editLeaderPassword').value = '';
 
     document.getElementById('editLeaderModal').classList.remove('hidden');
 };
@@ -429,14 +428,7 @@ async function setupModals() {
             const nome = document.getElementById('leaderName').value;
             const cargo = document.getElementById('leaderRole').value;
             const email = document.getElementById('leaderEmail').value;
-            const senha = document.getElementById('leaderPassword').value;
 
-
-            const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            if (!senha || !senhaRegex.test(senha)) {
-                showToast("Senha inválida. A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.", "error");
-                return;
-            }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email || !emailRegex.test(email)) {
@@ -450,13 +442,13 @@ async function setupModals() {
                 return;
             }
 
-            const cargoRegex = /^[A-Za-zÀ-ÖØ-öçÇ ]+$/;
+            const cargoRegex = /^[A-Za-zÀ-ÖØ-öçÇ\s().\-\/]+$/;
             if (!cargo || !cargoRegex.test(cargo)) {
                 showToast("Cargo inválido, insira um cargo válido", "error");
                 return;
             }
 
-            await createLider({ nome, cargo, email, senha });
+            await createLider({ nome, cargo, email });
 
             await refreshLideres();
 
