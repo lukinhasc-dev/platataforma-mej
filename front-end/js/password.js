@@ -1,4 +1,4 @@
-import { API_URL } from "./config.js";
+import { API_URL } from "../config.js";
 
 const token = new URLSearchParams(location.search).get('token');
 
@@ -31,7 +31,7 @@ function validarReq(id, ok) {
     el.querySelector('i').className = ok ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark';
 }
 
-function toggleVer(inputId, btn) {
+window.toggleVer = function(inputId, btn) {
     const input = document.getElementById(inputId);
     const isText = input.type === 'text';
     input.type = isText ? 'password' : 'text';

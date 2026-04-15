@@ -20,7 +20,7 @@ api.interceptors.response.use(
         const isAdmin = window.location.pathname.includes('admin');
         if (err.response?.status === 401 && isAdmin) {
             localStorage.removeItem('mej_token');
-            window.location.href = '/front-end/index.html';
+            window.location.href = '/index.html';
         }
         return Promise.reject(err);
     }

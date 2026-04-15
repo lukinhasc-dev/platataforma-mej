@@ -1,6 +1,6 @@
-import { getAllMateriais, downloadMaterial } from "./api/material.index.js";
-import { getAllLideres, loginLider } from "./api/lideres.index.js";
-import { API_URL } from "./config.js";
+import { getAllMateriais, downloadMaterial } from "../api/material.index.js";
+import { getAllLideres, loginLider } from "../api/lideres.index.js";
+import { API_URL } from "../config.js";
 
 let slides = [];
 let lideres = [];
@@ -221,7 +221,7 @@ async function setupLoginModal() {
             if (resultado.success) {
                 showToast('Login efetuado com sucesso!', 'success');
                 localStorage.setItem('mej_token', resultado.token);
-                setTimeout(() => { window.location.href = '/front-end/admin.html'; }, 1000);
+                setTimeout(() => { window.location.href = '/admin.html'; }, 1000);
             } else {
                 showToast(resultado.message || 'Email ou senha incorretos.', 'error');
                 btn.innerHTML = 'Entrar no Painel';

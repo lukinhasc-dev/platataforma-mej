@@ -1,5 +1,5 @@
-import { getAllLideres, createLider, deleteLider, updateLider } from "./api/lideres.index.js"
-import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downloadMaterial } from "./api/material.index.js"
+import { getAllLideres, createLider, deleteLider, updateLider } from "../api/lideres.index.js"
+import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downloadMaterial } from "../api/material.index.js"
 
 // Variáveis de estado global (no escopo do módulo)
 let adminSlides = [];
@@ -49,7 +49,7 @@ async function refreshLideres() {
 async function initAdmin() {
     // Guard de autenticação — redireciona se não tiver token
     if (!localStorage.getItem('mej_token')) {
-        window.location.href = '/front-end/index.html';
+        window.location.href = '/index.html';
         return;
     }
 

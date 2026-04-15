@@ -615,7 +615,7 @@ body {
             rgba(7, 14, 31, 0.50) 0%,
             rgba(15, 32, 48, 0.40) 50%,
             rgba(26, 52, 72, 0.58) 100%),
-        url('./assets/hero-bg.jpg') center center / cover no-repeat;
+        url('../assets/hero-bg.jpg') center center / cover no-repeat;
     position: relative;
     overflow: hidden;
     padding-top: 11rem;
