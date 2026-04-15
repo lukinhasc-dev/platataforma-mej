@@ -1,6 +1,31 @@
-import { getAllMateriais, downloadMaterial } from "../api/material.index.js";
-import { getAllLideres, loginLider } from "../api/lideres.index.js";
-import { API_URL } from "../config.js";
+console.log("🟢 [DEBUG] script.js começou a ser lido pelo navegador.");
+
+let getAllMateriais, downloadMaterial, getAllLideres, loginLider, API_URL;
+
+async function bootstrap() {
+    console.log("🟢 [DEBUG] Carregando módulos da API...");
+    try {
+        const materialMod = await import("../api/material.index.js");
+        getAllMateriais = materialMod.getAllMateriais;
+        downloadMaterial = materialMod.downloadMaterial;
+        console.log("✅ Módulo Material carregado.");
+
+        const lideresMod = await import("../api/lideres.index.js");
+        getAllLideres = lideresMod.getAllLideres;
+        loginLider = lideresMod.loginLider;
+        console.log("✅ Módulo Líderes carregado.");
+
+        const configMod = await import("../config.js");
+        API_URL = configMod.API_URL;
+        console.log("✅ Módulo Config carregado. API_URL:", API_URL);
+
+        init();
+    } catch (e) {
+        console.error("❌ [DEBUG] Falha ao carregar módulos:", e);
+    }
+}
+
+bootstrap();
 
 let slides = [];
 let lideres = [];
