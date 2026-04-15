@@ -58,22 +58,27 @@ window.showToast = async function (message, type = 'success') {
 };
 
 async function init() {
-    createParticles();
-    slides = await loadMateriais();
-    lideres = await loadLideres();
-    setupScrollEffects();
-    setupNavigation();
-    setupMobileMenu();
-    setupLoginModal();
-    setupViewerModal();
-    renderFilters();
-    renderSlides();
-    setupSearch();
+    try {
+        createParticles();
+        slides = await loadMateriais();
+        lideres = await loadLideres();
+        setupScrollEffects();
+        setupNavigation();
+        setupMobileMenu();
+        setupLoginModal();
+        setupViewerModal();
+        renderFilters();
+        renderSlides();
+        setupSearch();
+    } catch (error) {
+        console.error("Erro na inicialização da aplicação:", error);
+    }
 }
 
 //Função para criar particulas
 function createParticles() {
     const container = document.getElementById('particles');
+    if (!container) return;
     for (let i = 0; i < 20; i++) {
         let particle = document.createElement('div');
         particle.className = 'particle';
@@ -95,8 +100,10 @@ function createParticles() {
 function setupScrollEffects() {
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) navbar.classList.add('scrolled');
-        else navbar.classList.remove('scrolled');
+        if (navbar) {
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        }
     });
 
     window.revealObserver = new IntersectionObserver((entries) => {
@@ -146,7 +153,7 @@ async function setupMobileMenu() {
         document.body.style.overflow = 'auto';
     };
 
-    closeMobileBtn.addEventListener('click', closeMenu);
+    if (closeMobileBtn) closeMobileBtn.addEventListener('click', closeMenu);
     mobileMenu.addEventListener('click', (e) => {
         if (e.target === mobileMenu) closeMenu();
     });
@@ -167,6 +174,8 @@ async function setupLoginModal() {
     const forgotPanel = document.getElementById('forgotPanel');
     const forgotForm = document.getElementById('forgotForm');
 
+    if (!modal) return;
+
     const openModal = () => {
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -177,90 +186,100 @@ async function setupLoginModal() {
     const closeModal = () => {
         modal.classList.add('hidden');
         document.body.style.overflow = 'auto';
-        // Reset para o painel de login ao fechar
-        loginPanel.style.display = '';
-        forgotPanel.style.display = 'none';
+        if (loginPanel) loginPanel.style.display = '';
+        if (forgotPanel) forgotPanel.style.display = 'none';
     };
 
     if (openBtn) openBtn.addEventListener('click', openModal);
     if (openBtnMobile) openBtnMobile.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
     // Toggle esqueceu/voltar
-    document.getElementById('showForgotBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        loginPanel.style.display = 'none';
-        forgotPanel.style.display = '';
-    });
-    document.getElementById('showLoginBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        forgotPanel.style.display = 'none';
-        loginPanel.style.display = '';
-    });
+    const showForgotBtn = document.getElementById('showForgotBtn');
+    const showLoginBtn = document.getElementById('showLoginBtn');
+
+    if (showForgotBtn) {
+        showForgotBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (loginPanel) loginPanel.style.display = 'none';
+            if (forgotPanel) forgotPanel.style.display = '';
+        });
+    }
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (forgotPanel) forgotPanel.style.display = 'none';
+            if (loginPanel) loginPanel.style.display = '';
+        });
+    }
 
     // Submit do formulário de login
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const emailInput = document.getElementById('email').value.trim();
-        const passwordInput = document.getElementById('password').value.trim();
+            const emailInput = document.getElementById('email').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
 
-        if (!emailInput || !passwordInput) {
-            showToast('Preencha o email e a senha.', 'error');
-            return;
-        }
+            if (!emailInput || !passwordInput) {
+                showToast('Preencha o email e a senha.', 'error');
+                return;
+            }
 
-        const btn = loginForm.querySelector('.btn-submit');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A autenticar...';
-        btn.disabled = true;
+            const btn = loginForm.querySelector('.btn-submit');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A autenticar...';
+            btn.disabled = true;
 
-        try {
-            const resultado = await loginLider(emailInput, passwordInput);
+            try {
+                const resultado = await loginLider(emailInput, passwordInput);
 
-            if (resultado.success) {
-                showToast('Login efetuado com sucesso!', 'success');
-                localStorage.setItem('mej_token', resultado.token);
-                setTimeout(() => { window.location.href = '/admin.html'; }, 1000);
-            } else {
-                showToast(resultado.message || 'Email ou senha incorretos.', 'error');
+                if (resultado.success) {
+                    showToast('Login efetuado com sucesso!', 'success');
+                    localStorage.setItem('mej_token', resultado.token);
+                    setTimeout(() => { window.location.href = '/admin.html'; }, 1000);
+                } else {
+                    showToast(resultado.message || 'Email ou senha incorretos.', 'error');
+                    btn.innerHTML = 'Entrar no Painel';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                const msg = error?.response?.data?.message || 'Email ou senha incorretos.';
+                showToast(msg, 'error');
                 btn.innerHTML = 'Entrar no Painel';
                 btn.disabled = false;
             }
-        } catch (error) {
-            const msg = error?.response?.data?.message || 'Email ou senha incorretos.';
-            showToast(msg, 'error');
-            btn.innerHTML = 'Entrar no Painel';
-            btn.disabled = false;
-        }
-    });
+        });
+    }
 
     // Submit do formulário de recuperação
-    forgotForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('forgotEmail').value.trim();
-        const btn = document.getElementById('forgotBtn');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
-        btn.disabled = true;
+    if (forgotForm) {
+        forgotForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value.trim();
+            const btn = document.getElementById('forgotBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            btn.disabled = true;
 
-        try {
-            await fetch(`${API_URL}/api/lideres/forgot-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-            // Sempre mostra sucesso (segurança — não revela se email existe)
-            showToast('Se o email existir, você receberá as instruções!', 'success');
-            forgotForm.reset();
-            forgotPanel.style.display = 'none';
-            loginPanel.style.display = '';
-        } catch {
-            showToast('Erro de conexão. Tente novamente.', 'error');
-        } finally {
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Link';
-            btn.disabled = false;
-        }
-    });
+            try {
+                await fetch(`${API_URL}/api/lideres/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+                showToast('Se o email existir, você receberá as instruções!', 'success');
+                forgotForm.reset();
+                if (forgotPanel) forgotPanel.style.display = 'none';
+                if (loginPanel) loginPanel.style.display = '';
+            } catch {
+                showToast('Erro de conexão. Tente novamente.', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
 }
 
 //Função para configurar modal de visualização
@@ -270,30 +289,26 @@ async function setupViewerModal() {
     const iframe = document.getElementById('fileIframe');
     const fallback = document.getElementById('viewerFallback');
 
-    closeViewerBtn.addEventListener('click', closeViewer);
+    if (!viewerModal) return;
+
+    if (closeViewerBtn) closeViewerBtn.addEventListener('click', closeViewer);
     viewerModal.addEventListener('click', (e) => { if (e.target === viewerModal) closeViewer(); });
 
-    //Função para fechar modal de visualização
     function closeViewer() {
         viewerModal.classList.add('hidden');
         document.body.style.overflow = 'auto';
-        setTimeout(() => { iframe.src = ''; }, 300);
+        if (iframe) setTimeout(() => { iframe.src = ''; }, 300);
     }
 
     window.openViewer = (id) => {
         const numId = Number(id);
         const file = slides.find(s => Number(s.id) === numId);
-        if (!file) {
-            console.warn('[openViewer] Material não encontrado. id recebido:', id, '| ids disponíveis:', slides.map(s => s.id));
-            return;
-        }
+        if (!file) return;
 
         const fileUrl = file.link_material || file.url || '';
         const ext = fileUrl.split('.').pop()?.split('?')[0].toUpperCase() || '';
 
-        // Tipos suportados pelo Microsoft Office Online (URL pública do Supabase funciona direto)
         const OFFICE_EXTS = ['DOCX', 'XLSX', 'PPTX', 'DOC', 'XLS', 'PPT'];
-        // Imagens renderizam nativamente no iframe
         const IMAGE_EXTS = ['PNG', 'JPEG', 'JPG', 'GIF', 'WEBP'];
 
         let iframeSrc = null;
@@ -306,17 +321,20 @@ async function setupViewerModal() {
             iframeSrc = fileUrl;
         }
 
-        document.getElementById('viewerTitle').textContent = file.titulo_material;
+        const viewerTitle = document.getElementById('viewerTitle');
+        if (viewerTitle) viewerTitle.textContent = file.titulo_material;
 
-        if (iframeSrc) {
+        if (iframeSrc && iframe) {
             iframe.src = iframeSrc;
             iframe.classList.remove('hidden');
-            fallback.classList.add('hidden');
+            if (fallback) fallback.classList.add('hidden');
         } else {
-            // Tipo não suportado → botão de download
-            iframe.classList.add('hidden');
-            fallback.classList.remove('hidden');
-            document.getElementById('fallbackDownloadBtn').onclick = () => window.downloadMaterial(file.id, file.titulo_material);
+            if (iframe) iframe.classList.add('hidden');
+            if (fallback) {
+                fallback.classList.remove('hidden');
+                const downloadBtn = document.getElementById('fallbackDownloadBtn');
+                if (downloadBtn) downloadBtn.onclick = () => window.downloadMaterial(file.id, file.titulo_material);
+            }
         }
 
         viewerModal.classList.remove('hidden');
@@ -324,9 +342,9 @@ async function setupViewerModal() {
     };
 }
 
-//Função para renderizar filtros
 async function renderFilters() {
     const container = document.getElementById('categoryFilters');
+    if (!container) return;
     container.innerHTML = categories.map(cat => {
         const isActive = currentCategory === cat.name;
         return `
@@ -337,16 +355,15 @@ async function renderFilters() {
     }).join('');
 }
 
-//Função para configurar busca
 async function setupSearch() {
     const input = document.getElementById('searchInput');
+    if (!input) return;
     input.addEventListener('input', (e) => { currentSearch = e.target.value.toLowerCase(); renderSlides(); });
 }
 
 window.setCategory = (category) => { currentCategory = category; renderFilters(); renderSlides(); };
-window.resetFilters = () => { currentCategory = 'Todos'; document.getElementById('searchInput').value = ''; currentSearch = ''; renderFilters(); renderSlides(); };
+window.resetFilters = () => { currentCategory = 'Todos'; const search = document.getElementById('searchInput'); if (search) search.value = ''; currentSearch = ''; renderFilters(); renderSlides(); };
 
-//Função para obter cor do arquivo
 function getFileColorClass(type) {
     const t = (type || '').toUpperCase();
     if (t === 'PDF') return 'file-pdf';
@@ -354,11 +371,12 @@ function getFileColorClass(type) {
     return 'file-default';
 }
 
-//Função para renderizar slides
 async function renderSlides() {
     const grid = document.getElementById('slidesGrid');
     const status = document.getElementById('statusMessage');
     const empty = document.getElementById('emptyState');
+
+    if (!grid) return;
 
     const filtered = slides.filter(slide => {
         const matchCat = currentCategory === 'Todos' || slide.categoria_material === currentCategory;
@@ -368,12 +386,12 @@ async function renderSlides() {
         return matchCat && matchSearch;
     });
 
-    status.innerHTML = `<i class="fa-solid fa-chart-simple text-gold"></i> A exibir ${filtered.length} resultados`;
+    if (status) status.innerHTML = `<i class="fa-solid fa-chart-simple text-gold"></i> A exibir ${filtered.length} resultados`;
 
     if (filtered.length === 0) {
-        grid.innerHTML = ''; empty.classList.remove('hidden');
+        grid.innerHTML = ''; if (empty) empty.classList.remove('hidden');
     } else {
-        empty.classList.add('hidden');
+        if (empty) empty.classList.add('hidden');
 
         grid.innerHTML = filtered.map((slide, index) => {
             const tipo = (slide.link_material || slide.url || '').split('.').pop()?.split('?')[0].toUpperCase() || 'Ficheiro';
@@ -395,7 +413,7 @@ async function renderSlides() {
                     <div class="card-footer">
                         <div class="card-date"><i class="fa-regular fa-calendar"></i> ${data}</div>
                         <div class="card-actions">
-                            <button onclick="window.openViewer(${slide.id})" class="btn-action btn-view hover-lift" title="Visualizar"><i class="fa-regular fa-eye"></i></button>
+                            <button onclick="window.openViewer(${slide.id})" class="btn-action btn-view hover-lift" title="Visualizar"><i class="fa-regular fa eye"></i></button>
                             <button onclick="window.downloadMaterial(${slide.id}, '${slide.titulo_material}')" class="btn-action btn-download btn-ripple hover-lift" title="Baixar"><i class="fa-solid fa-download"></i></button>
                         </div>
                     </div>
@@ -404,22 +422,18 @@ async function renderSlides() {
         `}).join('');
 
         document.querySelectorAll('#slidesGrid .reveal').forEach(el => {
-            setTimeout(() => window.revealObserver.observe(el), 10);
+            if (window.revealObserver) setTimeout(() => window.revealObserver.observe(el), 10);
         });
     }
 }
 
-
-
-// Tornar acessível globalmente
 window.downloadMaterial = async (id, filename) => {
     try {
         window.showToast("Iniciando download...", "success");
         await downloadMaterial(id, filename);
     } catch (error) {
-        console.error("Erro no download:", error);
         window.showToast("Erro ao baixar arquivo", "error");
     }
 };
 
-await init();
+init();

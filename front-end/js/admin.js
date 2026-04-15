@@ -65,11 +65,15 @@ async function initAdmin() {
         window.showToast("Erro ao carregar dados do servidor", "error");
     }
 
-    document.getElementById('totalFilesCount').innerText = adminSlides.length;
-    document.getElementById('totalLeadersCount').innerText = adminLeaders.length;
+    const totalFilesEl = document.getElementById('totalFilesCount');
+    if (totalFilesEl) totalFilesEl.innerText = adminSlides.length;
+
+    const totalLeadersEl = document.getElementById('totalLeadersCount');
+    if (totalLeadersEl) totalLeadersEl.innerText = adminLeaders.length;
 
     const totalDownloads = adminSlides.reduce((acc, slide) => acc + (slide.downloads_mes || 0), 0);
-    document.getElementById('totalDownloadsCount').innerText = totalDownloads;
+    const totalDownloadsEl = document.getElementById('totalDownloadsCount');
+    if (totalDownloadsEl) totalDownloadsEl.innerText = totalDownloads;
 
     renderDashboardTable();
     renderAcervoTable(adminSlides);
@@ -107,6 +111,7 @@ window.switchView = function (viewId, element) {
 // Função para renderizar a tabela do dashboard
 async function renderDashboardTable() {
     const tbody = document.getElementById('dashboardTableBody');
+    if (!tbody) return;
     const recentSlides = adminSlides.slice(0, 3);
     tbody.innerHTML = recentSlides.map((material, index) => `
         <tr style="animation: fadeIn 0.3s ease forwards; animation-delay: ${index * 0.1}s; opacity: 0;">
@@ -120,6 +125,7 @@ async function renderDashboardTable() {
 // Função para renderizar a tabela do acervo
 async function renderAcervoTable(dataToRender) {
     const tbody = document.getElementById('acervoTableBody');
+    if (!tbody) return;
     if (!dataToRender || dataToRender.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4 fade-in">Nenhum arquivo encontrado.</td></tr>`;
         return;
@@ -145,6 +151,7 @@ async function renderAcervoTable(dataToRender) {
 // Função para renderizar a tabela de líderes
 async function renderLiderancaTable() {
     const tbody = document.getElementById('liderancaTableBody');
+    if (!tbody) return;
     tbody.innerHTML = adminLeaders.map((leader, index) => `
         <tr style="animation: fadeIn 0.3s ease forwards; animation-delay: ${index * 0.05}s; opacity: 0;">
             <td class="font-bold text-dark flex align-center gap-2">
@@ -331,172 +338,180 @@ async function setupModals() {
     const uploadForm = document.getElementById('uploadForm');
     const submitUploadBtn = document.getElementById('submitUploadBtn');
 
-    uploadForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const originalText = submitUploadBtn.innerHTML;
-        submitUploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
-        submitUploadBtn.disabled = true;
+    if (uploadForm && submitUploadBtn) {
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalText = submitUploadBtn.innerHTML;
+            submitUploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+            submitUploadBtn.disabled = true;
 
-        try {
-            const titulo_material = document.getElementById('fileTitle').value;
-            const categoria_material = document.getElementById('fileCategory').value;
-            const autor_material = document.getElementById('fileAuthor').value;
-            const fileInput = document.getElementById('fileUpload');
+            try {
+                const titulo_material = document.getElementById('fileTitle').value;
+                const categoria_material = document.getElementById('fileCategory').value;
+                const autor_material = document.getElementById('fileAuthor').value;
+                const fileInput = document.getElementById('fileUpload');
 
-            const formData = new FormData();
-            formData.append('titulo_material', titulo_material);
-            formData.append('categoria_material', categoria_material);
-            formData.append('autor_material', autor_material);
-            if (fileInput && fileInput.files[0]) {
-                formData.append('material', fileInput.files[0]);
+                const formData = new FormData();
+                formData.append('titulo_material', titulo_material);
+                formData.append('categoria_material', categoria_material);
+                formData.append('autor_material', autor_material);
+                if (fileInput && fileInput.files[0]) {
+                    formData.append('material', fileInput.files[0]);
+                }
+
+                await createMaterial(formData);
+
+                await refreshMateriais();
+
+                showToast(`Arquivo "${titulo_material}" adicionado!`, 'success');
+                document.getElementById('uploadModal').classList.add('hidden');
+                uploadForm.reset();
+                const zone = document.getElementById('fileUploadZone');
+                const nameEl = document.getElementById('fileUploadName');
+                if (zone && nameEl) {
+                    zone.classList.remove('has-file');
+                    nameEl.textContent = '';
+                    const icon = zone.querySelector('.file-upload-icon i');
+                    if (icon) icon.className = 'fa-solid fa-file-arrow-up';
+                    const text = zone.querySelector('.file-upload-text');
+                    if (text) text.textContent = 'Clique para selecionar um arquivo';
+                }
+            } catch (error) {
+                console.error("Erro ao criar material:", error);
+                showToast('Erro ao salvar arquivo.', 'error');
+            } finally {
+                submitUploadBtn.innerHTML = originalText;
+                submitUploadBtn.disabled = false;
             }
-
-            await createMaterial(formData);
-
-            await refreshMateriais();
-
-            showToast(`Arquivo "${titulo_material}" adicionado!`, 'success');
-            document.getElementById('uploadModal').classList.add('hidden');
-            uploadForm.reset();
-            const zone = document.getElementById('fileUploadZone');
-            const nameEl = document.getElementById('fileUploadName');
-            if (zone && nameEl) {
-                zone.classList.remove('has-file');
-                nameEl.textContent = '';
-                const icon = zone.querySelector('.file-upload-icon i');
-                if (icon) icon.className = 'fa-solid fa-file-arrow-up';
-                const text = zone.querySelector('.file-upload-text');
-                if (text) text.textContent = 'Clique para selecionar um arquivo';
-            }
-        } catch (error) {
-            console.error("Erro ao criar material:", error);
-            showToast('Erro ao salvar arquivo.', 'error');
-        } finally {
-            submitUploadBtn.innerHTML = originalText;
-            submitUploadBtn.disabled = false;
-        }
-    });
+        });
+    }
 
     // --- Modal de Edição de Material ---
     const editFileForm = document.getElementById('editFileForm');
     const submitEditFileBtn = document.getElementById('submitEditFileBtn');
 
-    editFileForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const originalText = submitEditFileBtn.innerHTML;
-        submitEditFileBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
-        submitEditFileBtn.disabled = true;
+    if (editFileForm && submitEditFileBtn) {
+        editFileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalText = submitEditFileBtn.innerHTML;
+            submitEditFileBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+            submitEditFileBtn.disabled = true;
 
-        try {
-            const id = parseInt(document.getElementById('editFileId').value);
-            const formData = new FormData();
-            formData.append('titulo_material', document.getElementById('editFileTitle').value);
-            formData.append('categoria_material', document.getElementById('editFileCategory').value);
-            formData.append('autor_material', document.getElementById('editFileAuthor').value);
-            const fileInput = document.getElementById('editFileUpload');
-            if (fileInput && fileInput.files[0]) {
-                formData.append('material', fileInput.files[0]);
+            try {
+                const id = parseInt(document.getElementById('editFileId').value);
+                const formData = new FormData();
+                formData.append('titulo_material', document.getElementById('editFileTitle').value);
+                formData.append('categoria_material', document.getElementById('editFileCategory').value);
+                formData.append('autor_material', document.getElementById('editFileAuthor').value);
+                const fileInput = document.getElementById('editFileUpload');
+                if (fileInput && fileInput.files[0]) {
+                    formData.append('material', fileInput.files[0]);
+                }
+
+                await updateMaterial(id, formData);
+
+                await refreshMateriais();
+
+                showToast('Material atualizado com sucesso!', 'success');
+                document.getElementById('editFileModal').classList.add('hidden');
+                editFileForm.reset();
+            } catch (error) {
+                console.error('Erro ao editar material:', error);
+                showToast('Erro ao atualizar material.', 'error');
+            } finally {
+                submitEditFileBtn.innerHTML = originalText;
+                submitEditFileBtn.disabled = false;
             }
-
-            await updateMaterial(id, formData);
-
-            await refreshMateriais();
-
-            showToast('Material atualizado com sucesso!', 'success');
-            document.getElementById('editFileModal').classList.add('hidden');
-            editFileForm.reset();
-        } catch (error) {
-            console.error('Erro ao editar material:', error);
-            showToast('Erro ao atualizar material.', 'error');
-        } finally {
-            submitEditFileBtn.innerHTML = originalText;
-            submitEditFileBtn.disabled = false;
-        }
-    });
+        });
+    }
 
     // --- Modal de Criação de Líder ---
     const addLeaderForm = document.getElementById('addLeaderForm');
     const submitLeaderBtn = document.getElementById('submitLeaderBtn');
 
-    addLeaderForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const originalText = submitLeaderBtn.innerHTML;
-        submitLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando acesso...';
-        submitLeaderBtn.disabled = true;
+    if (addLeaderForm && submitLeaderBtn) {
+        addLeaderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalText = submitLeaderBtn.innerHTML;
+            submitLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando acesso...';
+            submitLeaderBtn.disabled = true;
 
-        try {
-            const nome = document.getElementById('leaderName').value;
-            const cargo = document.getElementById('leaderRole').value;
-            const email = document.getElementById('leaderEmail').value;
+            try {
+                const nome = document.getElementById('leaderName').value;
+                const cargo = document.getElementById('leaderRole').value;
+                const email = document.getElementById('leaderEmail').value;
 
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-                showToast("Email inválido, insira um email válido", "error");
-                return;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email || !emailRegex.test(email)) {
+                    showToast("Email inválido, insira um email válido", "error");
+                    return;
+                }
+
+                const nomeRegex = /^[A-Za-zÀ-ÖØ-öçÇ ]+$/;
+                if (!nome || !nomeRegex.test(nome)) {
+                    showToast("Nome inválido, insira um nome válido", "error");
+                    return;
+                }
+
+                const cargoRegex = /^[A-Za-zÀ-ÖØ-öçÇ\s().\-\/]+$/;
+                if (!cargo || !cargoRegex.test(cargo)) {
+                    showToast("Cargo inválido, insira um cargo válido", "error");
+                    return;
+                }
+
+                await createLider({ nome, cargo, email });
+
+                await refreshLideres();
+
+                showToast(`Acesso criado para ${nome}!`, 'success');
+                document.getElementById('addLeaderModal').classList.add('hidden');
+                addLeaderForm.reset();
+            } catch (error) {
+                showToast("Erro ao criar líder", "error");
+            } finally {
+                submitLeaderBtn.innerHTML = originalText;
+                submitLeaderBtn.disabled = false;
             }
-
-            const nomeRegex = /^[A-Za-zÀ-ÖØ-öçÇ ]+$/;
-            if (!nome || !nomeRegex.test(nome)) {
-                showToast("Nome inválido, insira um nome válido", "error");
-                return;
-            }
-
-            const cargoRegex = /^[A-Za-zÀ-ÖØ-öçÇ\s().\-\/]+$/;
-            if (!cargo || !cargoRegex.test(cargo)) {
-                showToast("Cargo inválido, insira um cargo válido", "error");
-                return;
-            }
-
-            await createLider({ nome, cargo, email });
-
-            await refreshLideres();
-
-            showToast(`Acesso criado para ${nome}!`, 'success');
-            document.getElementById('addLeaderModal').classList.add('hidden');
-            addLeaderForm.reset();
-        } catch (error) {
-            showToast("Erro ao criar líder", "error");
-        } finally {
-            submitLeaderBtn.innerHTML = originalText;
-            submitLeaderBtn.disabled = false;
-        }
-    });
+        });
+    }
 
     // --- Modal de Edição de Líder ---
     const editLeaderForm = document.getElementById('editLeaderForm');
     const submitEditLeaderBtn = document.getElementById('submitEditLeaderBtn');
 
-    editLeaderForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const originalText = submitEditLeaderBtn.innerHTML;
-        submitEditLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
-        submitEditLeaderBtn.disabled = true;
+    if (editLeaderForm && submitEditLeaderBtn) {
+        editLeaderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalText = submitEditLeaderBtn.innerHTML;
+            submitEditLeaderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+            submitEditLeaderBtn.disabled = true;
 
-        try {
-            const id = parseInt(document.getElementById('editLeaderId').value);
-            const nome = document.getElementById('editLeaderName').value;
-            const cargo = document.getElementById('editLeaderRole').value;
-            const email = document.getElementById('editLeaderEmail').value;
-            const senha = document.getElementById('editLeaderPassword').value;
+            try {
+                const id = parseInt(document.getElementById('editLeaderId').value);
+                const nome = document.getElementById('editLeaderName').value;
+                const cargo = document.getElementById('editLeaderRole').value;
+                const email = document.getElementById('editLeaderEmail').value;
+                const senha = document.getElementById('editLeaderPassword').value;
 
-            const payload = { nome, cargo, email };
-            if (senha) payload.senha = senha; // senha é opcional na edição
+                const payload = { nome, cargo, email };
+                if (senha) payload.senha = senha; // senha é opcional na edição
 
-            await updateLider(id, payload);
+                await updateLider(id, payload);
 
-            await refreshLideres();
+                await refreshLideres();
 
-            showToast(`Líder "${nome}" atualizado!`, 'success');
-            document.getElementById('editLeaderModal').classList.add('hidden');
-        } catch (error) {
-            console.error('Erro ao editar líder:', error);
-            showToast('Erro ao atualizar líder.', 'error');
-        } finally {
-            submitEditLeaderBtn.innerHTML = originalText;
-            submitEditLeaderBtn.disabled = false;
-        }
-    });
+                showToast(`Líder "${nome}" atualizado!`, 'success');
+                document.getElementById('editLeaderModal').classList.add('hidden');
+            } catch (error) {
+                console.error('Erro ao editar líder:', error);
+                showToast('Erro ao atualizar líder.', 'error');
+            } finally {
+                submitEditLeaderBtn.innerHTML = originalText;
+                submitEditLeaderBtn.disabled = false;
+            }
+        });
+    }
 }
 
 // Inicialização
