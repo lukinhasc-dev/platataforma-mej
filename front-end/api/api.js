@@ -1,6 +1,6 @@
 import { API_URL } from "../config.js";
 
-const api = axios.create({
+const api = window.axios.create({
     baseURL: `${API_URL}/api`,
     withCredentials: true,
     headers: { "Content-Type": "application/json" },

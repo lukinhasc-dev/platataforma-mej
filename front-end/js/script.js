@@ -57,11 +57,20 @@ window.showToast = async function (message, type = 'success') {
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
 };
 
+console.log("🚀 Script.js carregado com sucesso!");
+
 async function init() {
+    console.log("🛠️ Iniciando init()...");
     try {
+        console.log("✨ Criando partículas...");
         createParticles();
+        
+        console.log("📦 Carregando materiais...");
         slides = await loadMateriais();
+        console.log(`✅ ${slides.length} materiais carregados.`);
+        
         lideres = await loadLideres();
+        
         setupScrollEffects();
         setupNavigation();
         setupMobileMenu();
@@ -70,8 +79,9 @@ async function init() {
         renderFilters();
         renderSlides();
         setupSearch();
+        console.log("🎉 Inicialização concluída com sucesso!");
     } catch (error) {
-        console.error("Erro na inicialização da aplicação:", error);
+        console.error("❌ Erro CRÍTICO na inicialização:", error);
     }
 }
 
