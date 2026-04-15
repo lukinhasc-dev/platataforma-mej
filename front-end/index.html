@@ -323,11 +323,12 @@
 
     <!-- Scripts da Aplicação -->
     <script>
-        console.log("🚀 HTML carregado até o fim!");
-        // Se este alerta não aparecer, o seu navegador está carregando uma versão antiga (cache/Vercel)
-        alert("SISTEMA: Scripts da plataforma iniciados");
+        window.onload = function() {
+            console.log("🚀 URL ATUAL:", window.location.href);
+            alert("A plataforma MEJ tentou iniciar em: " + window.location.href);
+        };
     </script>
-    <script type="module" src="/js/script.js"></script>
+    <script type="module" src="./js/script.js"></script>
 </body>
 
 </html>
