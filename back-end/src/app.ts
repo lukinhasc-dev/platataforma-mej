@@ -17,7 +17,7 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 const corsOptions: CorsOptions = {
-    origin: (origin, callback) => {
+    origin: (origin: any, callback: any) => {
         // Permite ferramentas como Postman (sem origin)
         if (!origin) {
             if (process.env.NODE_ENV === "development") {
