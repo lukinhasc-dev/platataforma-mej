@@ -1,33 +1,6 @@
-console.log("🟢 [DEBUG] script.js carregado.");
-
-let getAllMateriais, downloadMaterial, getAllLideres, loginLider, API_URL;
-
-async function bootstrap() {
-    console.log("🟢 [DEBUG] Iniciando carregamento de módulos...");
-    try {
-        // Usando caminhos relativos ao arquivo (../)
-        const materialMod = await import("../services/material.index.js");
-        getAllMateriais = materialMod.getAllMateriais;
-        downloadMaterial = materialMod.downloadMaterial;
-
-        const lideresMod = await import("../services/lideres.index.js");
-        getAllLideres = lideresMod.getAllLideres;
-        loginLider = lideresMod.loginLider;
-
-        const configMod = await import("../config.js");
-        API_URL = configMod.API_URL;
-
-        console.log("✅ Todos os módulos carregados com sucesso.");
-        // Só chama o init DEPOIS que as funções da API existem
-        await init();
-    } catch (e) {
-        console.error("❌ [DEBUG] Falha Crítica ao carregar módulos:", e);
-        showToast("Erro ao carregar componentes do sistema", "error");
-    }
-}
-
-// Removi o init() solto no final e agora ele é chamado pelo bootstrap
-bootstrap();
+import { getAllMateriais, downloadMaterial } from "../services/material.index.js";
+import { getAllLideres, loginLider } from "../services/lideres.index.js";
+import { API_URL } from "../config.js";
 
 let slides = [];
 let lideres = [];
@@ -472,3 +445,5 @@ window.downloadMaterial = async (id, filename) => {
         window.showToast("Erro ao baixar arquivo", "error");
     }
 };
+
+init();

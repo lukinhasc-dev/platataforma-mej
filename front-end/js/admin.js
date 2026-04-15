@@ -47,10 +47,8 @@ async function refreshLideres() {
 }
 
 async function initAdmin() {
-    console.log("👮 Iniciando Painel Administrativo...");
     // Guard de autenticação — redireciona se não tiver token
     if (!localStorage.getItem('mej_token')) {
-        console.warn("🚫 Sem token! Redirecionando para login...");
         window.location.href = '/index.html';
         return;
     }
