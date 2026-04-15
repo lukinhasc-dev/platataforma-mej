@@ -1,28 +1,18 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
-    await transporter.sendMail({
-        from: `"MEJ - Plataforma" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+        from: 'MEJ - Plataforma <onboarding@resend.dev>',
         to,
         subject,
         html,
     });
 };
-
 
 export const emailConviteTemplate = (nome: string, link: string, tipo: 'convite' | 'recuperacao') => `
 <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:2rem;background:#f8fafc;border-radius:12px">
