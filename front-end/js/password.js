@@ -1,4 +1,4 @@
-import { API_URL } from "../config.js";
+import { API_URL } from "./config.js";
 
 const token = new URLSearchParams(location.search).get('token');
 

@@ -1,6 +1,6 @@
-import { getAllMateriais, downloadMaterial } from "../api/material.index.js";
-import { getAllLideres, loginLider } from "../api/lideres.index.js";
-import { API_URL } from "../config.js";
+import { getAllMateriais, downloadMaterial } from "./api/material.index.js";
+import { getAllLideres, loginLider } from "./api/lideres.index.js";
+import { API_URL } from "./config.js";
 
 let slides = [];
 let lideres = [];
