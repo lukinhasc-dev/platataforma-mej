@@ -1,30 +1,32 @@
-console.log("🟢 [DEBUG] script.js começou a ser lido pelo navegador.");
+console.log("🟢 [DEBUG] script.js carregado.");
 
 let getAllMateriais, downloadMaterial, getAllLideres, loginLider, API_URL;
 
 async function bootstrap() {
-    console.log("🟢 [DEBUG] Carregando módulos da API...");
+    console.log("🟢 [DEBUG] Iniciando carregamento de módulos...");
     try {
-        const materialMod = await import("../api/material.index.js");
+        // Usando caminhos relativos ao arquivo (../)
+        const materialMod = await import("../services/material.index.js");
         getAllMateriais = materialMod.getAllMateriais;
         downloadMaterial = materialMod.downloadMaterial;
-        console.log("✅ Módulo Material carregado.");
 
-        const lideresMod = await import("../api/lideres.index.js");
+        const lideresMod = await import("../services/lideres.index.js");
         getAllLideres = lideresMod.getAllLideres;
         loginLider = lideresMod.loginLider;
-        console.log("✅ Módulo Líderes carregado.");
 
         const configMod = await import("../config.js");
         API_URL = configMod.API_URL;
-        console.log("✅ Módulo Config carregado. API_URL:", API_URL);
 
-        init();
+        console.log("✅ Todos os módulos carregados com sucesso.");
+        // Só chama o init DEPOIS que as funções da API existem
+        await init();
     } catch (e) {
-        console.error("❌ [DEBUG] Falha ao carregar módulos:", e);
+        console.error("❌ [DEBUG] Falha Crítica ao carregar módulos:", e);
+        showToast("Erro ao carregar componentes do sistema", "error");
     }
 }
 
+// Removi o init() solto no final e agora ele é chamado pelo bootstrap
 bootstrap();
 
 let slides = [];
@@ -470,5 +472,3 @@ window.downloadMaterial = async (id, filename) => {
         window.showToast("Erro ao baixar arquivo", "error");
     }
 };
-
-init();

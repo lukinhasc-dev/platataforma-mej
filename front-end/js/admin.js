@@ -1,5 +1,5 @@
-import { getAllLideres, createLider, deleteLider, updateLider } from "../api/lideres.index.js"
-import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downloadMaterial } from "../api/material.index.js"
+import { getAllLideres, createLider, deleteLider, updateLider } from "../services/lideres.index.js"
+import { getAllMateriais, createMaterial, deleteMaterial, updateMaterial, downloadMaterial } from "../services/material.index.js"
 
 // Variáveis de estado global (no escopo do módulo)
 let adminSlides = [];

@@ -327,7 +327,7 @@
             console.log("🔍 Verificando integridade dos arquivos...");
             fetch('./js/script.js').then(r => console.log("📂 script.js:", r.status == 200 ? "OK" : "ERRO " + r.status));
             fetch('./config.js').then(r => console.log("📂 config.js:", r.status == 200 ? "OK" : "ERRO " + r.status));
-            fetch('./api/api.js').then(r => console.log("📂 api.js:", r.status == 200 ? "OK" : "ERRO " + r.status));
+            fetch('./services/api.js').then(r => console.log("📂 services/api.js:", r.status == 200 ? "OK" : "ERRO " + r.status));
             
             console.log("🚀 URL ATUAL:", window.location.href);
             alert("SISTEMA: Teste de arquivos iniciado. Olhe o Console (F12)");
