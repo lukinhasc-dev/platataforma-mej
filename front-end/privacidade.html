@@ -15,13 +15,10 @@
     <link rel="stylesheet" href="./styles/styles.css">
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="module" src="./js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+    <script type="module" src="./js/script.js" defer></script>
 </head>
 
-
-
-<html>
 
 <body class="bg-pattern antialiased">
 
@@ -39,9 +36,9 @@
                 </div>
 
                 <nav class="nav-desktop">
-                    <a href="#inicio" class="nav-link active">Início</a>
-                    <a href="#acervo" class="nav-link">Materiais</a>
-                    <a href="#sobre" class="nav-link">Sobre</a>
+                    <a href="./index.html" class="nav-link active">Início</a>
+                    <a href="./index.html#materiais" class="nav-link">Materiais</a>
+                    <a href="./index.html#sobre" class="nav-link">Sobre</a>
                 </nav>
 
                 <button class="btn-leadership btn-ripple" id="openLoginBtn">
@@ -114,7 +111,7 @@
                         </li>
                         <li>
                             <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:contato@oficialmej.com.br">contato@oficialmej.com.br</a>
+                            <a href="mailto:comunicacao.jaboque@gmail.com">comunicacao.jaboque@gmail.com</a>
                         </li>
                         <li>
                             <i class="fa-solid fa-clock"></i>
@@ -167,6 +164,90 @@
             </div>
         </div>
     </footer>
+
+    <div id="mobileMenu" class="mobile-menu-overlay hidden">
+        <div class="mobile-menu-container">
+            <button class="modal-close" id="closeMobileMenuBtn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="logo-icon-wrapper"
+                style="margin: 0 auto; width: 4.5rem; height: 4.5rem; background-color: var(--color-dark); margin-bottom: 2rem;">
+                <img src="./assets/logo.png" class="logo-icon">
+            </div>
+            <nav class="nav-mobile">
+                <a href="./index.html" class="nav-mobile-link active">Início</a>
+                <a href="./index.html#materiais" class="nav-mobile-link">Materiais</a>
+                <a href="./index.html#sobre" class="nav-mobile-link">Sobre</a>
+                <button class="btn-leadership btn-ripple" id="mobileOpenLoginBtn"
+                    style="width: 100%; display: flex; justify-content: center; margin-top: 1rem;">
+                    <i class="fa-solid fa-lock"></i> Área de Liderança
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+
+            <!-- Painel de Login -->
+            <div id="loginPanel">
+                <div class="modal-header">
+                    <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+                    <h3>Área da Liderança</h3>
+                    <p>Acesso restrito para a gestão da plataforma.</p>
+                </div>
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="lideranca@oficialmej.com.br" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Palavra-passe</label>
+                        <input type="password" id="password" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-submit btn-ripple">Entrar no Painel</button>
+                    <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+                        <a href="#" id="showForgotBtn"
+                            style="color:var(--color-accent);text-decoration:none;font-weight:600">
+                            <i class="fa-solid fa-key" style="font-size:0.75rem"></i> Esqueceu a senha?
+                        </a>
+                    </p>
+
+                    <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+                        Ao entrar você concorda com os <a href="termos.html"
+                            style="color:var(--color-accent);text-decoration:none;font-weight:600">Termos de Uso</a> e a
+                        <a href="privacidade.html"
+                            style="color:var(--color-accent);text-decoration:none;font-weight:600">Política de
+                            Privacidade</a>.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Painel de Recuperação de Senha -->
+            <div id="forgotPanel" style="display:none">
+                <div class="modal-header">
+                    <div class="modal-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <h3>Recuperar Senha</h3>
+                    <p>Insira o seu email e enviaremos um link para criar uma nova senha.</p>
+                </div>
+                <form class="login-form" id="forgotForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">E-mail cadastrado</label>
+                        <input type="email" id="forgotEmail" placeholder="lideranca@oficialmej.com.br" required>
+                    </div>
+                    <button type="submit" class="btn-submit btn-ripple" id="forgotBtn">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Link
+                    </button>
+                    <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+                        <a href="#" id="showLoginBtn"
+                            style="color:var(--color-gray-500);text-decoration:none;font-weight:600">
+                            <i class="fa-solid fa-arrow-left" style="font-size:0.75rem"></i> Voltar ao login
+                        </a>
+                    </p>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </body>
 
 </html>
