@@ -16,7 +16,10 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'image/jpeg',
-        'image/png'
+        'image/png',
+        'application/zip',
+        'application/x-rar-compressed',
+        'video/mp4'
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
@@ -26,11 +29,11 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
     }
 };
 
-// Máximo de 10MB por arquivo
+// Máximo de 50MB por arquivo
 const upload = multer({
     storage,
     fileFilter,
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+    limits: { fileSize: 50 * 1024 * 1024 } // 50MB
 });
 
 export default upload;
