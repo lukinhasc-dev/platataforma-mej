@@ -14,6 +14,9 @@
 
     <link rel="stylesheet" href="./styles/styles.css">
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+    <script type="module" src="./js/script.js" defer></script>
 </head>
 
 <body class="bg-pattern antialiased">
@@ -61,7 +64,7 @@
                 <span class="text-gradient">Crescer na Palavra</span>
             </h1>
             <p class="hero-description">
-                Acesse e estude conteúdos que fortalecem sua fé e aprofundam seu conhecimento na Palavra.
+                Tenha acesso a todos os materiais da igreja em um só lugar.
             </p>
             <a href="#materiais" class="scroll-down-btn hover-float">
                 <i class="fa-solid fa-arrow-down"></i>
@@ -167,7 +170,7 @@
                         </li>
                         <li>
                             <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:contato@oficialmej.com">contato@oficialmej.com</a>
+                            <a href="mailto:comunicacao.jaboque@gmail.com">comunicacao.jaboque@gmail.com</a>
                         </li>
                         <li>
                             <i class="fa-solid fa-clock"></i>
@@ -254,7 +257,7 @@
                 <form class="login-form" id="loginForm">
                     <div class="form-group">
                         <label for="email">E-mail</label>
-                        <input type="email" id="email" placeholder="lideranca@oficialmej.com" required>
+                        <input type="email" id="email" placeholder="lideranca@oficialmej.com.br" required>
                     </div>
                     <div class="form-group">
                         <label for="password">Palavra-passe</label>
@@ -266,6 +269,14 @@
                             style="color:var(--color-accent);text-decoration:none;font-weight:600">
                             <i class="fa-solid fa-key" style="font-size:0.75rem"></i> Esqueceu a senha?
                         </a>
+                    </p>
+
+                    <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+                        Ao entrar você concorda com os <a href="termos.html"
+                            style="color:var(--color-accent);text-decoration:none;font-weight:600">Termos de Uso</a> e a
+                        <a href="privacidade.html"
+                            style="color:var(--color-accent);text-decoration:none;font-weight:600">Política de
+                            Privacidade</a>.
                     </p>
                 </form>
             </div>
@@ -280,7 +291,7 @@
                 <form class="login-form" id="forgotForm">
                     <div class="form-group">
                         <label for="forgotEmail">E-mail cadastrado</label>
-                        <input type="email" id="forgotEmail" placeholder="lideranca@oficialmej.com" required>
+                        <input type="email" id="forgotEmail" placeholder="lideranca@oficialmej.com.br" required>
                     </div>
                     <button type="submit" class="btn-submit btn-ripple" id="forgotBtn">
                         <i class="fa-solid fa-paper-plane"></i> Enviar Link
@@ -318,11 +329,7 @@
         </div>
     </div>
 
-    <!-- Scripts de Terceiros -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <!-- Scripts da Aplicação -->
-    <script type="module" src="./js/script.js"></script>
 </body>
 
 </html>
