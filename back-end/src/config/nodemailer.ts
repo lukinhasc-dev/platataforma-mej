@@ -9,7 +9,6 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
   await resend.emails.send({
     from: 'MEJ - Plataforma <contato@oficialmej.com.br>',
     to,
-    replyTo: 'lucas.sca2022@gmail.com',
     subject,
     html,
   });

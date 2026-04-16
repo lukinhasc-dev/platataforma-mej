@@ -14,6 +14,8 @@ const allowedOrigins = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
     "https://platataforma-mej.vercel.app",
+    "https://oficialmej.com.br",
+    "https://www.oficialmej.com.br",
     process.env.FRONTEND_URL,
 ].filter(Boolean) as string[];
 
