@@ -48,12 +48,12 @@ export class LideresController {
         try {
             const { email } = req.body
             const lider = await findByEmail(email)
-            // Sempre retorna 200 por segurança (não revela se email existe)
-            if (!lider) return res.status(200).json({ message: "Se o email existir, você receberá as instruções." })
+            // E-mail não encontrado: retorna 200 mas com found=false para mascarar
+            if (!lider) return res.status(200).json({ found: false, message: "Erro interno. Tente novamente mais tarde." })
             const token = await gerarToken(lider.id, 'recuperacao')
             const link = `${process.env.FRONTEND_URL}/set-password.html?token=${token}`
             await sendEmail(lider.email, 'Recuperação de Senha — Painel MEJ', emailConviteTemplate(lider.nome, link, 'recuperacao'))
-            return res.status(200).json({ message: "Se o email existir, você receberá as instruções." })
+            return res.status(200).json({ found: true, message: "Email de recuperação enviado com sucesso!" })
         } catch (error: any) {
             return res.status(500).json({ message: error.message })
         }

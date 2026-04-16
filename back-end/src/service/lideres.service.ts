@@ -49,8 +49,9 @@ export const gerarToken = async (lider_id: number, tipo: 'convite' | 'recuperaca
         "UPDATE lider_tokens SET usado = TRUE WHERE lider_id = $1 AND tipo = $2 AND usado = FALSE",
         [lider_id, tipo]
     )
+    const expiracao = tipo === 'recuperacao' ? "NOW() + INTERVAL '10 minutes'" : "NOW() + INTERVAL '24 hours'"
     const result = await db.query(
-        "INSERT INTO lider_tokens (lider_id, tipo) VALUES ($1, $2) RETURNING token",
+        `INSERT INTO lider_tokens (lider_id, tipo, expira_em) VALUES ($1, $2, ${expiracao}) RETURNING token`,
         [lider_id, tipo]
     )
     return result.rows[0].token

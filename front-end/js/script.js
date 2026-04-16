@@ -273,15 +273,21 @@ async function setupLoginModal() {
             btn.disabled = true;
 
             try {
-                await fetch(`${API_URL}/api/lideres/forgot-password`, {
+                const response = await fetch(`${API_URL}/api/lideres/forgot-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email }),
                 });
-                showToast('Se o email existir, você receberá as instruções!', 'success');
-                forgotForm.reset();
-                if (forgotPanel) forgotPanel.style.display = 'none';
-                if (loginPanel) loginPanel.style.display = '';
+                const data = await response.json();
+
+                if (data.found === true) {
+                    showToast('✅ Email de recuperação enviado com sucesso!', 'success');
+                    forgotForm.reset();
+                    if (forgotPanel) forgotPanel.style.display = 'none';
+                    if (loginPanel) loginPanel.style.display = '';
+                } else {
+                    showToast('❌ Erro interno. Tente novamente mais tarde.', 'error');
+                }
             } catch {
                 showToast('Erro de conexão. Tente novamente.', 'error');
             } finally {
