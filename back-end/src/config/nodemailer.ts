@@ -6,12 +6,13 @@ dotenv.config();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
-    await resend.emails.send({
-        from: 'MEJ - Plataforma <onboarding@resend.dev>',
-        to,
-        subject,
-        html,
-    });
+  await resend.emails.send({
+    from: 'MEJ - Plataforma <contato@oficialmej.com.br>',
+    to,
+    replyTo: 'lucas.sca2022@gmail.com',
+    subject,
+    html,
+  });
 };
 
 export const emailConviteTemplate = (nome: string, link: string, tipo: 'convite' | 'recuperacao') => `
@@ -19,9 +20,9 @@ export const emailConviteTemplate = (nome: string, link: string, tipo: 'convite'
   <h2 style="color:#0a1628">${tipo === 'convite' ? '👋 Bem-vindo(a) ao Painel MEJ!' : '🔐 Recuperação de Senha'}</h2>
   <p>Olá, <strong>${nome}</strong>!</p>
   <p>${tipo === 'convite'
-        ? 'Você foi adicionado(a) como líder no painel de gestão da <strong>Missão Evangélica Jaboque</strong>. Clique no botão abaixo para criar a sua senha de acesso.'
-        : 'Recebemos uma solicitação para redefinir sua senha. Clique no botão abaixo para criar uma nova senha.'
-    }</p>
+    ? 'Você foi adicionado(a) como líder no painel de gestão da <strong>Missão Evangélica Jaboque</strong>. Clique no botão abaixo para criar a sua senha de acesso.'
+    : 'Recebemos uma solicitação para redefinir sua senha. Clique no botão abaixo para criar uma nova senha.'
+  }</p>
   <a href="${link}" style="display:inline-block;margin:1.5rem 0;padding:0.875rem 2rem;background:#2c4a61;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">
     ${tipo === 'convite' ? 'Criar Minha Senha' : 'Redefinir Senha'}
   </a>
